@@ -10,8 +10,22 @@ class Task extends BaseController
 {
     public function index() {
         $taskModel = new TaskModel();
-        $data['tasks'] = $taskModel->findAll();
-        return view('tasks/index', $data);
+        
+        // Fetch filter options
+        $db = \Config\Database::connect();
+        $departments = $db->table('departments')->get()->getResultArray();
+        $tasktypes = $db->table('tasktypes')->get()->getResultArray();
+
+        // Apply filters from GET
+        $filters = $this->request->getGet();
+        $builder = $taskModel->getTasksWithFiltered($filters);
+        $tasks = $builder->get()->getResultArray();
+
+        return view('tasks/index', [
+            'tasks' => $tasks,
+            'departments' => $departments,
+            'tasktypes' => $tasktypes
+        ]);
     }
 
     // ✅ New method

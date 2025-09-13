@@ -12,10 +12,27 @@ class TaskApi extends ResourceController
     // GET /api/tasks
     public function index()
     {
-        //$tasks = $this->model->findAll();
-        $tasks = $this->model->getTasksWithUser();
+        $filters = $this->request->getGet(); // Get query parameters
+
+        $page     = isset($filters['page']) ? (int)$filters['page'] : 1;
+        $perPage  = isset($filters['per_page']) ? (int)$filters['per_page'] : 10;
+
+
+        $tasks = $this->model->getTasksWithFiltered($filters)
+            ->paginate($perPage, 'default', $page);
+
     
-        return $this->respond($tasks);
+        $pager = $this->model->pager;
+
+        return $this->respond([
+            'tasks' => $tasks,
+            'pager' => [
+                'currentPage'   => $pager->getCurrentPage('default'),
+                'totalPages'    => $pager->getPageCount('default'),
+                'totalTasks'    => $pager->getTotal('default'),
+                'perPage'       => $pager->getPerPage('20'),
+            ]
+        ]);
     }
 
     // GET /api/tasks/(:id)

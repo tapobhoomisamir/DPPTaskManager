@@ -44,10 +44,24 @@ class TaskModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getTasksWithUser()
+    public function getTasksWithFiltered($filters = [])
     {
-        return $this->select('tasks.*, users.name as user_name, users.email')
-            ->join('users', 'users.id = tasks.user_id','left')
-            ->findAll();
+        $builder = $this->select('tasks.id,tasks.title, tasks.status, tasks.due_date, users.name as user_name,departments.name as department_name,assign_by_user.name as assign_by_name,tasktypes.name as tasktype_name')
+            ->join('users', 'users.id = tasks.user_id', 'left')
+            ->join('users as assign_by_user', 'assign_by_user.id = tasks.assign_by', 'left')
+            ->join('departments', 'departments.id = tasks.department_id', 'left')
+            ->join('tasktypes', 'tasktypes.id = tasks.tasktype_id', 'left');
+
+        if (!empty($filters['status'])) {
+            $builder->where('tasks.status', $filters['status']);
+        }
+        if (!empty($filters['user_id'])) {
+            $builder->where('tasks.user_id', $filters['user_id']);
+        }
+        if (!empty($filters['due_date'])) {
+            $builder->where('tasks.due_date', $filters['due_date']);
+        }
+
+        return $builder; // Return the builder, NOT findAll()
     }
 }
