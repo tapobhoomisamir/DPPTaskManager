@@ -33,7 +33,7 @@ CI_ENVIRONMENT = development
 database.default.hostname = localhost
 database.default.database = taskmanager
 database.default.username = root
-database.default.password = yHk2mH#
+database.default.password = <password>
 database.default.DBDriver = MySQLi
 
 # database.default.hostname = localhost
