@@ -54,7 +54,8 @@ class TaskApi extends ResourceController
 
         return $this->respondCreated([
             'message' => 'Task created successfully',
-            'task_id' => $this->model->insertID()
+            'task_id' => $this->model->insertID(),
+            'success' => true
         ]);
     }
 
@@ -80,7 +81,8 @@ class TaskApi extends ResourceController
 
         $this->model->delete($id);
         return $this->respond([
-            'message' => 'Task deleted successfully'
+            'message' => 'Task deleted successfully',
+            'success' => true
         ]);
     }
 }

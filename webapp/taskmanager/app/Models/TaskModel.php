@@ -61,6 +61,15 @@ class TaskModel extends Model
         if (!empty($filters['due_date'])) {
             $builder->where('tasks.due_date', $filters['due_date']);
         }
+        if (!empty($filters['department_id'])) {
+            $builder->where('tasks.department_id', $filters['department_id']);
+        }
+        if (!empty($filters['tasktype_id'])) {
+            $builder->where('tasks.tasktype_id', $filters['tasktype_id']);
+        }
+        if (!empty($filters['workweek_id'])) {
+            $builder->where('tasks.workweek_id', $filters['workweek_id']);
+        }
 
         return $builder; // Return the builder, NOT findAll()
     }

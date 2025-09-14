@@ -15,6 +15,8 @@ class Task extends BaseController
         $db = \Config\Database::connect();
         $departments = $db->table('departments')->get()->getResultArray();
         $tasktypes = $db->table('tasktypes')->get()->getResultArray();
+        $users = $db->table('users')->get()->getResultArray();
+        $workweeks = $db->table('workweeks')->get()->getResultArray();
 
         // Apply filters from GET
         $filters = $this->request->getGet();
@@ -24,7 +26,9 @@ class Task extends BaseController
         return view('tasks/index', [
             'tasks' => $tasks,
             'departments' => $departments,
-            'tasktypes' => $tasktypes
+            'tasktypes' => $tasktypes,
+            'users'       => $users,
+            'workweeks' => $workweeks,
         ]);
     }
 
