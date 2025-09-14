@@ -40,47 +40,47 @@
         ?>
         <div class="container">
             <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="card text-bg-primary mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">All Tasks</h5>
-                            <p class="card-text display-4"><?= isset($allTasks) ? $allTasks : 0 ?></p>
+                <div class="col-6 col-md-3">
+                    <div class="card text-bg-primary mb-2" style="min-height:120px;">
+                        <div class="card-body py-2 px-3">
+                            <h5 class="card-title mb-1" style="font-size:1rem;">All Tasks</h5>
+                            <p class="card-text mb-0" style="font-size:2rem;"><?= isset($allTasks) ? $allTasks : 0 ?></p>
                             <small>Total assigned</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card text-bg-warning mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Pending Tasks</h5>
-                            <p class="card-text display-4"><?= isset($pendingTasks) ? $pendingTasks : 0 ?></p>
+                <div class="col-6 col-md-3">
+                    <div class="card text-bg-warning mb-2" style="min-height:120px;">
+                        <div class="ccard-body py-2 px-3">
+                            <h5 class="card-title mb-1" style="font-size:1rem;">Pending Tasks</h5>
+                            <p class="card-text mb-0" style="font-size:2rem;"><?= isset($pendingTasks) ? $pendingTasks : 0 ?></p>
                             <small>For you</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card text-bg-info mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">In Progress</h5>
-                            <p class="card-text display-4"><?= isset($inProgressTasks) ? $inProgressTasks : 0 ?></p>
+                <div class="col-6 col-md-3">
+                    <div class="card text-bg-info mb-2" style="min-height:120px;">
+                        <div class="card-body py-2 px-3">
+                            <h5 class="card-title mb-1" style="font-size:1rem;">In Progress</h5>
+                            <p class="card-text mb-0" style="font-size:2rem;"><?= isset($inProgressTasks) ? $inProgressTasks : 0 ?></p>
                             <small>Currently working</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card text-bg-secondary mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Await Approval</h5>
-                            <p class="card-text display-4"><?= isset($awaitApprovalTasks) ? $awaitApprovalTasks : 0 ?></p>
+                <div class="col-6 col-md-3">
+                    <div class="card text-bg-secondary mb-2" style="min-height:120px;">
+                        <div class="card-body py-2 px-3">
+                            <h5 class="card-title mb-1" style="font-size:1rem;">Await Approval</h5>
+                            <p class="card-text mb-0" style="font-size:2rem;"><?= isset($awaitApprovalTasks) ? $awaitApprovalTasks : 0 ?></p>
                             <small>Waiting for approval</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card text-bg-dark mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Hold</h5>
-                            <p class="card-text display-4"><?= isset($holdTasks) ? $holdTasks : 0 ?></p>
+                <div class="col-6 col-md-3">
+                    <div class="card text-bg-dark mb-2" style="min-height:120px;">
+                        <div class="card-body py-2 px-3">
+                            <h5 class="card-title mb-1" style="font-size:1rem;">Hold</h5>
+                            <p class="card-text mb-0" style="font-size:2rem;"><?= isset($holdTasks) ? $holdTasks : 0 ?></p>
                             <small>On hold</small>
                         </div>
                     </div>
