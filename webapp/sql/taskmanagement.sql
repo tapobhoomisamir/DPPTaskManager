@@ -45,7 +45,7 @@ CREATE TABLE tasks (
 	department_id INT,
 	tasktype_id INT,
 	workweek_id INT,
-    status ENUM('Pending','Completed','Awail Approval','Approval','Closed','Hold') DEFAULT 'Pending',	
+    status ENUM('Pending','In Progress','Completed','Await Approval','Approved','Closed','Hold') DEFAULT 'Pending',	
 	start_date TIMESTAMP NULL DEFAULT NULL,
     due_date TIMESTAMP NULL DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

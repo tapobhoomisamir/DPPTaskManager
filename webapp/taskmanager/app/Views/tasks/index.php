@@ -18,7 +18,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('dashboard') ?>">Dashboard</a>
+                    <a class="nav-link" href="<?= base_url('') ?>">Dashboard</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="<?= base_url('tasks') ?>">Tasks</a>
@@ -190,7 +190,8 @@
   </div>
 </div>
 <script>
-const apiUrl = 'http://localhost:8080/api/tasks';
+const BASE_URL = "<?= base_url() ?>";
+const apiUrl = `${BASE_URL}api/tasks`;
 let currentPage = 1;
 let totalPages = 1;
 
@@ -274,7 +275,7 @@ function renderTasks(tasks) {
 //delete task
 function deleteTask(taskId) {
     if (!confirm('Are you sure you want to delete this task?')) return;
-    fetch(`http://localhost:8080/api/tasks/${taskId}`, {
+    fetch(`${BASE_URL}api/tasks/${taskId}`, {
         method: 'DELETE'
     })
     .then(res => res.json())
@@ -333,14 +334,13 @@ document.getElementById('newTaskForm').addEventListener('submit', function(e) {
         work_week: form.work_week.value,
         status: "Pending"
     };
-    fetch('http://localhost:8080/api/tasks', {
+    fetch(`${BASE_URL}api/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     })
     .then(res => res.json())
     .then(result => {
-        debugger;
         if(result.success){
             form.reset();
             fetchTasks(1);
