@@ -30,10 +30,10 @@ CI_ENVIRONMENT = development
 # DATABASE
 #--------------------------------------------------------------------
 
-database.default.hostname = localhost
-database.default.database = taskmanager
-database.default.username = root
-database.default.password = <password>
+database.default.hostname = 89.117.188.204
+database.default.database = u272801803_tasksdb
+database.default.username = u272801803_taskadmin
+database.default.password = taskadmin876@
 database.default.DBDriver = MySQLi
 
 # database.default.hostname = localhost
