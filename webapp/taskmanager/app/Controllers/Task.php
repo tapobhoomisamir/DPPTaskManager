@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\TaskModel; 
+use App\Models\CommentModel; 
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 
@@ -50,5 +51,34 @@ class Task extends BaseController
         ]);
 
         return redirect()->to('/tasks');
+    }
+
+    public function view($id)
+    {
+        $taskModel = new TaskModel();
+        $commentModel = new CommentModel();
+
+        // fetch task details
+        $task = $taskModel
+            ->select('tasks.*, departments.name as department_name, tasktypes.name as tasktype_name, users.name as user_name')
+            ->join('departments', 'departments.id = tasks.department_id', 'left')
+            ->join('tasktypes', 'tasktypes.id = tasks.tasktype_id', 'left')
+            ->join('users', 'users.id = tasks.user_id', 'left')
+            ->find($id);
+
+        if (!$task) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException("Task not found");
+        }
+
+        // fetch comments
+        $comments = $commentModel
+            ->where('task_id', $id)
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
+
+        return view('tasks/view', [
+            'task' => $task,
+            'comments' => $comments,
+        ]);
     }
 }

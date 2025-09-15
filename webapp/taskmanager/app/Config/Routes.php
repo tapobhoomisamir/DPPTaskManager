@@ -13,6 +13,8 @@ $routes->get('/tasks/create', 'Task::create');
 $routes->post('/tasks/store', 'Task::store');
 $routes->get('/tasks/updateStatus/(:num)', 'Task::updateStatus/$1');
 
+$routes->get('/tasks/view/(:num)', 'Task::view/$1');
+
 $routes->get('/project', 'Project::index');
 
 $routes->group('api', ['namespace' => 'App\Controllers\Api'], function($routes){
@@ -21,4 +23,8 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function($routes){
     $routes->post('tasks', 'TaskApi::create');     // create task
     $routes->put('tasks/(:num)', 'TaskApi::update/$1'); // update task
     $routes->delete('tasks/(:num)', 'TaskApi::delete/$1'); // delete task
+
+    $routes->put('tasks/(:num)/status', 'TaskApi::updateStatus/$1');
+    $routes->post('tasks/(:num)/comments', 'TaskApi::addComment/$1');
+
 });

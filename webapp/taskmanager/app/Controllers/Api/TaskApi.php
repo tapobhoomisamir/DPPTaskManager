@@ -3,6 +3,7 @@ namespace App\Controllers\Api;
 
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\TaskModel;
+use App\Models\CommentModel; 
 
 class TaskApi extends ResourceController
 {
@@ -85,4 +86,51 @@ class TaskApi extends ResourceController
             'success' => true
         ]);
     }
+
+    // PUT /api/tasks/{id}/status
+    public function updateStatus($id = null)
+    {
+        $task = $this->model->find($id);
+        if (!$task) return $this->failNotFound('Task not found');
+
+        $data = $this->request->getJSON(true);
+        if (!isset($data['status'])) {
+            return $this->failValidationErrors('Status is required');
+        }
+
+        $this->model->update($id, ['status' => $data['status']]);
+
+        return $this->respond([
+            'success' => true,
+            'message' => 'Task status updated successfully',
+        ]);
+    }
+
+    // POST /api/tasks/{id}/comments
+    public function addComment($id = null)
+    {
+        $task = $this->model->find($id);
+        if (!$task) return $this->failNotFound('Task not found');
+
+        $data = $this->request->getJSON(true);
+        if (!isset($data['comment']) || trim($data['comment']) === '') {
+            return $this->failValidationErrors('Comment is required');
+        }
+
+        $commentModel = new CommentModel();
+        $commentData = [
+            'task_id'  => $id,
+            'comment'  => $data['comment'],
+            'user_id'  => $data['user_id'] ?? null, // optional
+        ];
+        $commentModel->insert($commentData);
+
+        return $this->respondCreated([
+            'success' => true,
+            'message' => 'Comment added successfully',
+            'comment_id' => $commentModel->insertID(),
+        ]);
+    }
+
+    
 }

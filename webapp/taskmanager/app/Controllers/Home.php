@@ -35,12 +35,29 @@ class Home extends BaseController
             ->where('status', 'Hold')
             ->countAllResults();
 
+        // Fetch filter options
+        $db = \Config\Database::connect();
+        $departments = $db->table('departments')->get()->getResultArray();
+        $tasktypes = $db->table('tasktypes')->get()->getResultArray();
+        $users = $db->table('users')->get()->getResultArray();
+        $workweeks = $db->table('workweeks')->get()->getResultArray();
+
+        // Apply filters from GET
+        $filters = $this->request->getGet();
+        $builder = $taskModel->getTasksWithFiltered($filters);
+        $tasks = $builder->get()->getResultArray();
+
         return view('dashboard/index', [
             'pendingTasks' => $pendingTasks,
             'inProgressTasks' => $inProgressTasks,
             'awaitApprovalTasks' => $awaitApprovalTasks,
             'holdTasks' => $holdTasks,
-            'allTasks' => $allTasks
+            'allTasks' => $allTasks,
+            'tasks' => $tasks,
+            'departments' => $departments,
+            'tasktypes' => $tasktypes,
+            'users'       => $users,
+            'workweeks' => $workweeks,
         ]);
     }
 }
