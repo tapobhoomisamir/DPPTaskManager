@@ -37,7 +37,13 @@
     <p><strong>Type:</strong> <?= esc($task['tasktype_name']) ?></p>
     <p><strong>Assigned To:</strong> <?= esc($task['user_name']) ?></p>
     <p><strong>Status:</strong> <?= esc($task['status']) ?></p>
-    <p><strong>Due Date:</strong> <?= esc($task['due_date']) ?></p>
+    <?php if (!empty($task['due_date'])): ?>
+        <p><strong>Due Date:</strong> <?= esc($task['due_date']) ?></p>
+    <?php endif; ?>
+
+    <?php if (!empty($task['expense'])): ?>
+        <p><strong>Expense:</strong> <?= esc($task['expense']) ?></p>
+    <?php endif; ?>
 
     <hr>
 

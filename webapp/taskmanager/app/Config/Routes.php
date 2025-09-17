@@ -14,6 +14,7 @@ $routes->post('/tasks/store', 'Task::store');
 $routes->get('/tasks/updateStatus/(:num)', 'Task::updateStatus/$1');
 
 $routes->get('/tasks/view/(:num)', 'Task::view/$1');
+$routes->get('/tasks/edit/(:num)', 'Task::edit/$1');
 
 $routes->get('/project', 'Project::index');
 

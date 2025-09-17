@@ -105,7 +105,7 @@
                             <select name="status" class="form-select" id="status">
                                 <option value="">All Status</option>
                                 <option value="Pending">Pending</option>
-                                <option value="Completed">Completed</option>
+                                <option value="Done">Done</option>
                                 <option value="Awail Approval">Awail Approval</option>
                                 <option value="Approved">Approved</option>
                                 <option value="Closed">Closed</option>
@@ -156,12 +156,13 @@
                             <!-- Tasks will be rendered here -->
                         </tbody>
                     </table>
+                    <nav>
+                        <ul class="pagination" id="pagination">
+                            <!-- Pagination will be rendered here -->
+                        </ul>
+                    </nav>
                 </div>
-                <nav>
-                    <ul class="pagination" id="pagination">
-                        <!-- Pagination will be rendered here -->
-                    </ul>
-                </nav>
+                
             </div>
         </div>
     </div>
@@ -225,6 +226,10 @@
                         <label for="due_date" class="form-label">Due Date</label>
                         <input type="date" class="form-control" id="due_date" name="due_date" required>
                     </div>
+                    <div class="mb-3">
+                        <label for="expense" class="form-label">Expense</label>
+                        <input type="number" class="form-control" id="expense" name="expense" min="0" step="1" required>
+                    </div>
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -258,274 +263,39 @@
 
     <!-- Add Comment Modal -->
     <div class="modal fade" id="commentModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <form id="commentForm">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title">Add Comment</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-dialog">
+            <form id="commentForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Add Comment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                <input type="hidden" id="commentTaskId" name="task_id">
+                <div class="mb-3">
+                    <label for="taskComment" class="form-label">Comment</label>
+                    <textarea class="form-control" id="taskComment" name="comment" rows="3" required></textarea>
+                </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Comment</button>
+                </div>
             </div>
-            <div class="modal-body">
-            <input type="hidden" id="commentTaskId" name="task_id">
-            <div class="mb-3">
-                <label for="taskComment" class="form-label">Comment</label>
-                <textarea class="form-control" id="taskComment" name="comment" rows="3" required></textarea>
-            </div>
-            </div>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary">Save Comment</button>
-            </div>
+            </form>
         </div>
-        </form>
     </div>
-    </div>
+
+ <script src="/js/tasks.js"></script>
 <script>
-const BASE_URL = "<?= base_url() ?>";
-const apiUrl = `${BASE_URL}api/tasks`;
-let currentPage = 1;
-let totalPages = 1;
+  // Initialize tasks when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+      fetchTasks(1); 
+  });
 
-// Adjust main content width when filter is collapsed/expanded
-document.addEventListener('DOMContentLoaded', function() {
-    const collapseFilter = document.getElementById('collapseFilter');
-    const mainContentCol = document.getElementById('mainContentCol');
-    collapseFilter.addEventListener('show.bs.collapse', function () {
-        mainContentCol.classList.remove('col-md-12');
-        mainContentCol.classList.add('col-md-12');
-    });
-    collapseFilter.addEventListener('hide.bs.collapse', function () {
-        mainContentCol.classList.remove('col-md-12');
-        mainContentCol.classList.add('col-md-12');
-    });
-});
-
-function fetchTasks(page = 1) {
-    const status = document.getElementById('status').value;
-    const department_id = document.getElementById('department_id').value;
-    const tasktype_id = document.getElementById('tasktype_id').value;
-
-    let url = `${apiUrl}?page=${page}`;
-    if (status) url += `&status=${encodeURIComponent(status)}`;
-    if (department_id) url += `&department_id=${encodeURIComponent(department_id)}`;
-    if (tasktype_id) url += `&tasktype_id=${encodeURIComponent(tasktype_id)}`;
-
-    fetch(url)
-        .then(res => res.json())
-        .then(data => {
-            renderTasks(data.tasks);
-            renderPagination(data.page, data.total_pages);
-            currentPage = data.page;
-            totalPages = data.total_pages;
-        });
-}
-
-function renderTasks(tasks) {
-    const tbody = document.getElementById('tasksBody');
-    tbody.innerHTML = '';
-    tasks.forEach(task => {
-        tbody.innerHTML += `
-            <tr>
-                <td>${escapeHtml(task.title)}</td>
-                <td>${escapeHtml(task.department_name)}</td>
-                <td>${escapeHtml(task.tasktype_name)}</td>
-                <td>${escapeHtml(task.user_name)}</td>
-                <td>
-                    <span class="badge ${task.status === 'Completed' ? 'bg-success' : 'bg-warning text-dark'}">
-                        ${escapeHtml(task.status)}
-                    </span>
-                </td>
-                <td>
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="overflow: visible;">
-                            <span class="bi bi-three-dots"></span>
-                            <span style="font-size:1.5em;">&#8942;</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end p-2" style="min-width: 180px; max-width: 100vw; white-space: normal;">
-                            <li><a class="dropdown-item" href="/tasks/edit/${task.id}">Edit</a></li>
-                            <li><a class="dropdown-item" href="/tasks/view/${task.id}">View</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="openStatusModal(${task.id}, '${task.status}')">Change Status</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="openCommentModal(${task.id})">Add Comment</a></li>
-                        </ul>
-                    </div>
-                </td>
-            </tr>
-        `;
-    });
-}
-
-//delete task
-function deleteTask(taskId) {
-    if (!confirm('Are you sure you want to delete this task?')) return;
-    fetch(`${BASE_URL}api/tasks/${taskId}`, {
-        method: 'DELETE'
-    })
-    .then(res => res.json())
-    .then(result => {
-        if(result.success){
-            fetchTasks();
-        } else {
-            alert(result.message || 'Failed to delete task.');
-        }
-    })
-    .catch(() => alert('Failed to delete task.'));
-}
-
-
-function renderPagination(page, total) {
-    const pagination = document.getElementById('pagination');
-    pagination.innerHTML = '';
-    for (let i = 1; i <= total; i++) {
-        pagination.innerHTML += `
-            <li class="page-item ${i === page ? 'active' : ''}">
-                <a class="page-link" href="#" onclick="fetchTasks(${i}); return false;">${i}</a>
-            </li>
-        `;
-    }
-}
-
-function escapeHtml(text) {
-    if (typeof text !== 'string') {
-        return text === null || text === undefined ? '' : String(text);
-    }
-    return text.replace(/[&<>"'`=\/]/g, function (s) {
-        return ({
-            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
-            "'": '&#39;', '`': '&#96;', '=': '&#61;', '/': '&#47;'
-        })[s];
-    });
-}
-
-document.getElementById('filterForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    fetchTasks(1);
-});
-
-// Initial fetch
-fetchTasks();
-
-document.getElementById('newTaskForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const form = e.target;
-    const data = {
-        title: form.title.value,
-        description: form.description.value, 
-        department_id: form.department_id.value,
-        tasktype_id: form.tasktype_id.value,
-        user_id: form.user_id.value,
-        work_week: form.work_week.value,
-        due_date: form.due_date.value,
-        status: "Pending"
-    };
-    fetch(`${BASE_URL}api/tasks`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    })
-    .then(res => res.json())
-    .then(result => {
-        if(result.success){
-            form.reset();
-            fetchTasks(1);
-            const modalEl = document.getElementById('newTaskModal');
-            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
-            modalInstance.hide();
-        } else {
-            alert(result.message || 'Failed to create task.');
-        }
-    })
-    .catch(() => alert('Failed to create task.'));
-});
-
-
-// Open status modal
-function openStatusModal(taskId, currentStatus) {
-    const statusSelect = document.getElementById('newStatus');
-    const hiddenTaskId = document.getElementById('statusTaskId');
-    hiddenTaskId.value = taskId;
-
-    statusSelect.innerHTML = "";
-
-    let allowedStatuses = [];
-
-    if (currentStatus === "Await Approval") {
-        allowedStatuses = ["Approved", "Closed"];
-    } 
-    else if (currentStatus === "Approved" || currentStatus === "Completed") {
-        allowedStatuses = [ "Closed"];
-    }
-    else {
-        allowedStatuses = ["Pending", "In Progress", "Await Approval","Completed", "Closed"];
-    }
-
-    allowedStatuses.forEach(status => {
-        const option = document.createElement("option");
-        option.value = status;
-        option.textContent = status;
-        statusSelect.appendChild(option);
-    });
-
-    const modal = new bootstrap.Modal(document.getElementById('statusModal'));
-    modal.show();
-}
-
-// Handle status form submit
-document.getElementById('statusModal').addEventListener('submit', function(e) {
-    e.preventDefault();
-    debugger;
-    const taskId = document.getElementById('statusTaskId').value;
-    const status = document.getElementById('newStatus').value;
-
-    fetch(`${BASE_URL}api/tasks/${taskId}/status`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
-    })
-    .then(res => res.json())
-    .then(result => {
-        if(result.success){
-            fetchTasks(currentPage);
-            bootstrap.Modal.getInstance(document.getElementById('statusModal')).hide();
-        } else {
-            alert(result.message || 'Failed to update status.');
-        }
-    })
-    .catch(() => alert('Failed to update status.'));
-});
-
-
-// Open comment modal
-function openCommentModal(taskId) {
-    document.getElementById('commentTaskId').value = taskId;
-    document.getElementById('taskComment').value = '';
-    const modal = new bootstrap.Modal(document.getElementById('commentModal'));
-    modal.show();
-}
-
-// Handle comment form submit
-document.getElementById('commentForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const taskId = document.getElementById('commentTaskId').value;
-    const comment = document.getElementById('taskComment').value;
-
-    fetch(`${BASE_URL}api/tasks/${taskId}/comments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ comment })
-    })
-    .then(res => res.json())
-    .then(result => {
-        if(result.success){
-            bootstrap.Modal.getInstance(document.getElementById('commentModal')).hide();
-            alert('Comment added successfully');
-        } else {
-            alert(result.message || 'Failed to add comment.');
-        }
-    })
-    .catch(() => alert('Failed to add comment.'));
-});
-
+  
 </script>
+
 <!-- Bootstrap 5 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 

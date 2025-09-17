@@ -31,7 +31,7 @@ class TaskApi extends ResourceController
                 'currentPage'   => $pager->getCurrentPage('default'),
                 'totalPages'    => $pager->getPageCount('default'),
                 'totalTasks'    => $pager->getTotal('default'),
-                'perPage'       => $pager->getPerPage('20'),
+                'perPage'       => $pager->getPerPage('default'),
             ]
         ]);
     }
@@ -70,7 +70,8 @@ class TaskApi extends ResourceController
         $this->model->update($id, $data);
 
         return $this->respond([
-            'message' => 'Task updated successfully'
+            'message' => 'Task updated successfully',
+            'success' => true
         ]);
     }
 
@@ -98,7 +99,15 @@ class TaskApi extends ResourceController
             return $this->failValidationErrors('Status is required');
         }
 
-        $this->model->update($id, ['status' => $data['status']]);
+        // Prepare update data
+        $updateData = ['status' => $data['status']];
+
+        // If status is "done", set completed_date = NOW
+        if (strtolower($data['status']) === 'closed') {
+            $updateData['completed_date'] = date('Y-m-d H:i:s');
+        }
+
+        $this->model->update($id, $updateData);
 
         return $this->respond([
             'success' => true,
