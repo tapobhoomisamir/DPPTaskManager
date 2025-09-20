@@ -12,7 +12,7 @@ class TaskModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['project_id','user_id','title','description','department_id','assign_by','due_date','tasktype_id','workweek_id','status','start_date','due_date','status','completed_date','expense'];
+    protected $allowedFields    = ['project_id','user_id','title','description','department_id','assign_by','due_date','tasktype_id','workweek_id','status','start_date','due_date','status','completed_date','expense','time_taken'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -73,4 +73,5 @@ class TaskModel extends Model
 
         return $builder; // Return the builder, NOT findAll()
     }
+    
 }

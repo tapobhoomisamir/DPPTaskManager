@@ -23,9 +23,6 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="<?= base_url('tasks') ?>">Tasks</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('reports') ?>">Reports</a>
-                </li>
             </ul>
         </div>
     </div>
@@ -36,7 +33,12 @@
     <p><strong>Department:</strong> <?= esc($task['department_name']) ?></p>
     <p><strong>Type:</strong> <?= esc($task['tasktype_name']) ?></p>
     <p><strong>Assigned To:</strong> <?= esc($task['user_name']) ?></p>
-    <p><strong>Status:</strong> <?= esc($task['status']) ?></p>
+    <?php if (!empty($task['completed_date'])): ?>
+        <p><strong>Completed Date:</strong> <?= esc($task['completed_date']) ?></p>
+    <?php endif; ?>
+    <?php if (!empty($task['time_taken'])): ?>
+        <p><strong>Time Taken:</strong> <?= esc($task['time_taken']) ?></p>
+    <?php endif; ?>
     <?php if (!empty($task['due_date'])): ?>
         <p><strong>Due Date:</strong> <?= esc($task['due_date']) ?></p>
     <?php endif; ?>
@@ -73,30 +75,6 @@
         <button type="submit" class="btn btn-primary">Post Comment</button>
     </form>
 </div>
-<script>
-    const BASE_URL = "<?= base_url() ?>";
-    const apiUrl = `${BASE_URL}api/tasks`;
-    document.getElementById('commentForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const taskId = document.getElementById('commentTaskId').value;
-    const comment = document.getElementById('taskComment').value;
-
-    fetch(`${BASE_URL}api/tasks/${taskId}/comments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ comment })
-    })
-    .then(res => res.json())
-    .then(result => {
-        if(result.success){
-            
-           // alert('Comment added successfully');
-        } else {
-            alert(result.message || 'Failed to add comment.');
-        }
-    })
-    .catch(() => alert('Failed to add comment.'));
-});
-</script>
+<script src="/js/taskcomment.js"></script>
 </body>
 </html>

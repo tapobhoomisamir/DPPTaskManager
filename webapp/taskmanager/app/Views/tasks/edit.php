@@ -24,9 +24,6 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="<?= base_url('tasks') ?>">Tasks</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('reports') ?>">Reports</a>
-                </li>
             </ul>
         </div>
     </div>
@@ -95,18 +92,29 @@
                     </option>
                 <?php endforeach; ?>
             </select>
-        </div>
+        </div>        
 
         <div class="mb-3">
             <label for="due_date" class="form-label">Due Date</label>
+            <?php 
+                $dueDate = !empty($task['due_date']) 
+                    ? date('Y-m-d', strtotime($task['due_date'])) 
+                    : '';
+            ?>
             <input type="date" class="form-control" id="due_date" name="due_date"
-                   value="<?= esc($task['due_date']) ?>" required>
+                   value="<?= esc($dueDate) ?>" required>
         </div>
 
         <div class="mb-3">
             <label for="expense" class="form-label">Expense</label>
             <input type="number" class="form-control" id="expense" name="expense"
                    value="<?= esc($task['expense']) ?>">
+        </div>
+
+        <div class="mb-3">
+            <label for="time_taken" class="form-label">Time taken</label>
+            <input type="number" class="form-control" id="time_taken" name="time_taken"
+                   value="<?= esc($task['time_taken']) ?>">
         </div>
 
         <div class="mb-3">
@@ -148,31 +156,9 @@
     </form>
 </div>
 
+<script src="/js/taskcomment.js"></script>
 <script>
-    const BASE_URL = "<?= base_url() ?>";
-
-    const apiUrl = `${BASE_URL}api/tasks`;
-    document.getElementById('commentForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const taskId = document.getElementById('commentTaskId').value;
-        const comment = document.getElementById('taskComment').value;
-
-        fetch(`${BASE_URL}api/tasks/${taskId}/comments`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ comment })
-        })
-        .then(res => res.json())
-        .then(result => {
-            if(result.success){
-                
-            // alert('Comment added successfully');
-            } else {
-                alert(result.message || 'Failed to add comment.');
-            }
-        })
-        .catch(() => alert('Failed to add comment.'));
-    });
+    
 
     document.getElementById('editTaskForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -185,7 +171,7 @@
             data[key] = value;
         });
 
-        fetch(`${BASE_URL}api/tasks/${taskId}`, {
+        fetch(`/api/tasks/${taskId}`, {
             method: 'PUT',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)

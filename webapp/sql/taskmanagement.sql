@@ -48,6 +48,7 @@ CREATE TABLE tasks (
     status ENUM('Pending','In Progress','Done','Await Approval','Approved','Closed','Hold') DEFAULT 'Pending',	
 	start_date TIMESTAMP NULL DEFAULT NULL,
 	expense INT NULL DEFAULT NULL,
+	time_taken INT NULL DEFAULT NULL,
     due_date TIMESTAMP NULL DEFAULT NULL,
 	completed_date TIMESTAMP NULL DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

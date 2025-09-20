@@ -74,17 +74,12 @@ function renderPagination(current, total) {
 // ✅ Fetch tasks from API (server-side pagination)
 async function fetchTasks(page = 1, filters = {}) {
 
-    const status = document.getElementById('status').value;
-    const department_id = document.getElementById('department_id').value;
-    const tasktype_id = document.getElementById('tasktype_id').value;
-    
+    createFilters(filters);
+
     currentPage = page;
 
-    if (status) filters["status"]=`${encodeURIComponent(status)}`;
-    if (department_id)  filters["department_id"]=`${encodeURIComponent(department_id)}`;
-    if (tasktype_id) filters["tasktype_id"]=`${encodeURIComponent(tasktype_id)}`;
-
     const query = new URLSearchParams({ page, ...filters });
+   
     const response = await fetch(`/api/tasks?${query}`);
     const data = await response.json();
 
@@ -92,6 +87,20 @@ async function fetchTasks(page = 1, filters = {}) {
 
     renderTasks(tasksData);
     renderPagination(data.pager.currentPage, data.pager.totalPages);
+}
+
+function createFilters(filters) {
+    const status = document.getElementById('status')?.value?.trim() || null;
+    const department_id = document.getElementById('department_id')?.value?.trim() || null;
+    const tasktype_id = document.getElementById('tasktype_id')?.value?.trim() || null;
+    const user_id = document.getElementById('user_id')?.value?.trim() || null;
+    const workweek_id = document.getElementById('workweek_id')?.value?.trim() || null;
+
+    if (status) filters["status"] = `${encodeURIComponent(status)}`;
+    if (department_id) filters["department_id"] = `${encodeURIComponent(department_id)}`;
+    if (tasktype_id) filters["tasktype_id"] = `${encodeURIComponent(tasktype_id)}`;
+    if (user_id) filters["user_id"] = `${encodeURIComponent(user_id)}`;
+    if (workweek_id) filters["workweek_id"] = `${encodeURIComponent(workweek_id)}`;
 }
 
 // ✅ Open status change modal
@@ -136,7 +145,6 @@ function openCommentModal(taskId) {
 // Handle status form submit
 document.getElementById('statusModal').addEventListener('submit', function(e) {
     e.preventDefault();
-    debugger;
     const taskId = document.getElementById('statusTaskId').value;
     const status = document.getElementById('newStatus').value;
 
@@ -206,7 +214,6 @@ document.getElementById('filterForm').addEventListener('submit', function(e) {
 
 document.getElementById('newTaskForm').addEventListener('submit', function(e) {
     
-    debugger;
         e.preventDefault();
         const form = e.target;
         const data = {
@@ -236,5 +243,19 @@ document.getElementById('newTaskForm').addEventListener('submit', function(e) {
             }
         })
         .catch(() => alert('Failed to create task.'));
+});
+
+document.getElementById('downloadReport').addEventListener('click', function () {
+    // collect filters (if any from dropdowns/inputs)
+    let filters = {};
+    createFilters(filters);
+
+    // Build query string
+    const params = new URLSearchParams({
+        ...filters
     });
+
+    // Open download
+    window.location.href = `/tasks/exportXls?${params.toString()}`;
+});
   

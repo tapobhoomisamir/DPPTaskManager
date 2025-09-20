@@ -16,6 +16,9 @@ $routes->get('/tasks/updateStatus/(:num)', 'Task::updateStatus/$1');
 $routes->get('/tasks/view/(:num)', 'Task::view/$1');
 $routes->get('/tasks/edit/(:num)', 'Task::edit/$1');
 
+
+$routes->get('/tasks/exportXls', 'Task::exportXls');
+
 $routes->get('/project', 'Project::index');
 
 $routes->group('api', ['namespace' => 'App\Controllers\Api'], function($routes){
@@ -27,5 +30,6 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function($routes){
 
     $routes->put('tasks/(:num)/status', 'TaskApi::updateStatus/$1');
     $routes->post('tasks/(:num)/comments', 'TaskApi::addComment/$1');
+
 
 });

@@ -11,6 +11,9 @@ use App\Models\WorkWeekModel;
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class Task extends BaseController
 {
     public function index() {
@@ -129,6 +132,49 @@ class Task extends BaseController
             'workweeks' => $workweeks,
             'comments' => $comments,
         ]);
+    }
+
+    public function exportXls()
+    {
+        $taskModel = new TaskModel();
+        $filters = $this->request->getGet(); // capture applied filters
+
+        // fetch all tasks (ignoring pagination but applying filters)
+        $builder = $taskModel->getTasksWithFiltered($filters); 
+        $tasks = $builder->get()->getResultArray();
+        // 👆 Make sure your model method allows "false" for no pagination.
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+
+        // Header row
+        $sheet->setCellValue('A1', 'Title');
+        $sheet->setCellValue('B1', 'Department');
+        $sheet->setCellValue('C1', 'Type');
+        $sheet->setCellValue('D1', 'User');
+        $sheet->setCellValue('E1', 'Status');
+
+        $row = 2;
+        foreach ($tasks as $task) {
+            $sheet->setCellValue('A' . $row, $task['title']);
+            $sheet->setCellValue('B' . $row, $task['department_name']);
+            $sheet->setCellValue('C' . $row, $task['tasktype_name']);
+            $sheet->setCellValue('D' . $row, $task['user_name']);
+            $sheet->setCellValue('E' . $row, $task['status']);
+            $row++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        // Send file as response
+        $filename = 'tasks_report_' . date('Ymd_His') . '.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header('Cache-Control: max-age=0');
+
+        $writer->save('php://output');
+        exit;
     }
 }
 
