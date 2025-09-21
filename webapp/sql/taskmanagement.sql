@@ -32,6 +32,8 @@ CREATE TABLE workweeks (
     id INT AUTO_INCREMENT PRIMARY KEY,
     workweek VARCHAR(100),
     month ENUM('January','Febraury','March','April','May','June','July','August','September','October','November','December') DEFAULT 'January',
+	start_date TIMESTAMP NULL DEFAULT NULL,
+	end_date TIMESTAMP NULL DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -40,7 +40,13 @@ class Home extends BaseController
         $departments = $db->table('departments')->get()->getResultArray();
         $tasktypes = $db->table('tasktypes')->get()->getResultArray();
         $users = $db->table('users')->get()->getResultArray();
-        $workweeks = $db->table('workweeks')->get()->getResultArray();
+        $today = date('Y-m-d 00:00:00'); // current date
+        $minus10 = date('Y-m-d 00:00:00', strtotime('-10 days'));
+        $add30 = date('Y-m-d 00:00:00', strtotime('+30 days'));
+
+        $workweeks = $db->table('workweeks')
+                ->where('start_date >',$minus10)
+                ->where('end_date <',$add30)->get()->getResultArray();
 
         // Apply filters from GET
         $filters = $this->request->getGet();
