@@ -19,6 +19,8 @@ $routes->get('/tasks/edit/(:num)', 'Task::edit/$1');
 
 $routes->get('/tasks/exportXls', 'Task::exportXls');
 
+$routes->post('/tasks/uploadAttachment/(:num)', 'Task::uploadAttachment/$1');
+
 $routes->get('/project', 'Project::index');
 
 $routes->group('api', ['namespace' => 'App\Controllers\Api'], function($routes){

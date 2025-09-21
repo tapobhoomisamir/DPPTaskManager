@@ -129,6 +129,10 @@
         <button type="submit" class="btn btn-primary">Save Changes</button>
         <a href="<?= base_url('tasks/view/'.$task['id']) ?>" class="btn btn-secondary">Cancel</a>
     </form>
+    <br><br>
+    <?= $this->include('partials/task_attachments.php') ?>
+
+    <br><br>
     <h4>Comments</h4>
     <?php if (!empty($comments)): ?>
         <ul class="list-group mb-3">
@@ -179,8 +183,9 @@
         .then(res => res.json())
         .then(result => {
             if (result.success) {
-                alert("Task updated successfully");
-                window.location.href = `${BASE_URL}tasks`;
+                // alert("Task updated successfully");
+                // window.location.href = `${BASE_URL}tasks`;
+                window.location.reload();
             } else {
                 alert(result.message || "Failed to update task");
             }

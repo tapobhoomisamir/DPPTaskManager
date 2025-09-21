@@ -48,6 +48,10 @@
     <?php endif; ?>
 
     <hr>
+    <br><br>
+    <?= $this->include('partials/task_attachments.php') ?>
+
+    <br><br>
 
     <h4>Comments</h4>
     <?php if (!empty($comments)): ?>

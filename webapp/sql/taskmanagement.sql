@@ -73,9 +73,10 @@ CREATE TABLE comments (
 CREATE TABLE attachments (
     id INT AUTO_INCREMENT PRIMARY KEY,
 	task_id INT,
-    attachment_url VARCHAR(100),
+    file_name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
     user_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,	
+    uploaded_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,	
 	FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

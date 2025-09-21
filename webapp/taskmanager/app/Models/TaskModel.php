@@ -46,11 +46,12 @@ class TaskModel extends Model
 
     public function getTasksWithFiltered($filters = [])
     {
-        $builder = $this->select('tasks.id,tasks.title, tasks.status, tasks.due_date, users.name as user_name,departments.name as department_name,assign_by_user.name as assign_by_name,tasktypes.name as tasktype_name')
+        $builder = $this->select('tasks.id,tasks.title, tasks.status, tasks.due_date, tasks.completed_date,tasks.due_date,tasks.time_taken,tasks.expense,users.name as user_name,departments.name as department_name,assign_by_user.name as assign_by_name,tasktypes.name as tasktype_name,workweeks.workweek as workweek_name')
             ->join('users', 'users.id = tasks.user_id', 'left')
             ->join('users as assign_by_user', 'assign_by_user.id = tasks.assign_by', 'left')
             ->join('departments', 'departments.id = tasks.department_id', 'left')
-            ->join('tasktypes', 'tasktypes.id = tasks.tasktype_id', 'left');
+            ->join('tasktypes', 'tasktypes.id = tasks.tasktype_id', 'left')
+            ->join('workweeks', 'workweeks.id = tasks.workweek_id', 'left');
 
         if (!empty($filters['status'])) {
             $builder->where('tasks.status', $filters['status']);
