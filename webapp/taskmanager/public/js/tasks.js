@@ -93,7 +93,14 @@ function createFilters(filters) {
     const status = document.getElementById('status')?.value?.trim() || null;
     const department_id = document.getElementById('department_id')?.value?.trim() || null;
     const tasktype_id = document.getElementById('tasktype_id')?.value?.trim() || null;
-    const user_id = document.getElementById('user_id')?.value?.trim() || null;
+    let user_id = null;
+    const pageId = document.getElementById('pageId');
+    const hiddenUserIdEl = document.getElementById('currentUserId');
+    if (pageId && pageId.value.trim() == "dashboard" && hiddenUserIdEl && hiddenUserIdEl.value.trim() != "") {
+        user_id = hiddenUserIdEl.value.trim();
+    } else {
+     user_id = document.getElementById('user_id')?.value?.trim() || null;
+    }
     const workweek_id = document.getElementById('workweek_id')?.value?.trim() || null;
 
     if (status) filters["status"] = `${encodeURIComponent(status)}`;

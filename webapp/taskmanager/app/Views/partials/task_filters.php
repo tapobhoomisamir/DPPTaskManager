@@ -36,7 +36,7 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4" id="userFilterDiv">
                         <label for="user_id" class="form-label">User</label>
                         <select name="user_id" class="form-select" id="user_id">
                             <option value="">All Users</option>

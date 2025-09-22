@@ -27,6 +27,14 @@
         </div>
     </div>
 </nav>
+<?php
+    // Example: Get user ID from session (adjust as needed)
+    //$userId = session()->get('user_id');
+    $currentUserId = 1; // Replace with actual user ID from session if needed
+    $pageId = 'tasks';
+?>
+<input type="hidden" id="currentUserId" name="currentUser_id" value="<?= $currentUserId ?>">
+<input type="hidden" id="pageId" name="page_id" value="<?= $pageId ?>">
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0">All Tasks</h2>
@@ -87,6 +95,7 @@
 <script>
   // Initialize tasks when page loads
   document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('userFilterDiv').style.display = 'block'; // Show user filter by default
       fetchTasks(1); 
   });
 

@@ -34,7 +34,11 @@
 
     // Fetch pending tasks count for this user (from controller)
     $pendingTasks = isset($pendingTasks) ? $pendingTasks : 0;
+    $currentUserId = 1; // Replace with actual user ID from session
+    $pageId = 'dashboard';
     ?>
+    <input type="hidden" id="currentUserId" name="currentUser_id" value="<?= $currentUserId ?>">
+    <input type="hidden" id="pageId" name="page_id" value="<?= $pageId ?>">
     <div class="container">
         <div class="row mb-4">
             <div class="col-6 col-md-3">
@@ -145,6 +149,7 @@
 <script>
   // Initialize tasks when page loads
   document.addEventListener('DOMContentLoaded', function() {
+       document.getElementById('userFilterDiv').style.display = 'none'; // Hide user filter by default
       fetchTasks(1); 
   });
 
