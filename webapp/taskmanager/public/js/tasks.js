@@ -21,10 +21,17 @@ function escapeHtml(text) {
 // ✅ Render tasks into the table body
 function renderTasks(tasks) {
     const tbody = document.getElementById('tasksBody');
+    const role = document.getElementById('currentUserRole') ? document.getElementById('currentUserRole').value : '';
     if (!tbody) return;
 
     tbody.innerHTML = '';
     tasks.forEach(task => {
+        let editoption = '';
+        let deleteoption = '';
+        if (role === 'Administrator' || role === 'Authority' || role === 'Incharge' ) { 
+            editoption =`<li><a class="dropdown-item" href="/tasks/edit/${task.id}">Edit</a></li>`
+            deleteoption =`<li><a class="dropdown-item" href="#" onclick="deleteTask(${task.id})">Delete</a></li>`
+        } 
         tbody.innerHTML += `
             <tr>
                 <td>${escapeHtml(task.title)}</td>
@@ -42,11 +49,11 @@ function renderTasks(tasks) {
                             <span style="font-size:1.5em;">&#8942;</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end p-2" style="min-width: 180px;">
-                            <li><a class="dropdown-item" href="/tasks/edit/${task.id}">Edit</a></li>
+                            ${editoption}
                             <li><a class="dropdown-item" href="/tasks/view/${task.id}">View</a></li>
                             <li><a class="dropdown-item" href="#" onclick="openStatusModal(${task.id}, '${task.status}')">Change Status</a></li>
                             <li><a class="dropdown-item" href="#" onclick="openCommentModal(${task.id})">Add Comment</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="deleteTask(${task.id})">Delete</a></li>
+                            ${deleteoption}
                         </ul>
                     </div>
                 </td>
@@ -74,13 +81,20 @@ function renderPagination(current, total) {
 // ✅ Fetch tasks from API (server-side pagination)
 async function fetchTasks(page = 1, filters = {}) {
 
-    createFilters(filters);
+    const params = new URLSearchParams();
+    createFilters(params);
 
     currentPage = page;
 
-    const query = new URLSearchParams({ page, ...filters });
+    params.append('page', currentPage);
+    params.append('per_page', rowsPerPage);
+
+    const apiUrl = `/api/tasks?${params.toString()}`;
+    console.log("API URL:", apiUrl);
+
+   // const query = new URLSearchParams({ page, ...filters });
    
-    const response = await fetch(`/api/tasks?${query}`);
+    const response = await fetch(apiUrl);
     const data = await response.json();
 
     tasksData = data.tasks || [];
@@ -89,7 +103,8 @@ async function fetchTasks(page = 1, filters = {}) {
     renderPagination(data.pager.currentPage, data.pager.totalPages);
 }
 
-function createFilters(filters) {
+function createFilters(params) {
+
     const status = document.getElementById('status')?.value?.trim() || null;
     const department_id = document.getElementById('department_id')?.value?.trim() || null;
     const tasktype_id = document.getElementById('tasktype_id')?.value?.trim() || null;
@@ -98,16 +113,33 @@ function createFilters(filters) {
     const hiddenUserIdEl = document.getElementById('currentUserId');
     if (pageId && pageId.value.trim() == "dashboard" && hiddenUserIdEl && hiddenUserIdEl.value.trim() != "") {
         user_id = hiddenUserIdEl.value.trim();
+        assign_by = hiddenUserIdEl.value.trim();
     } else {
-     user_id = document.getElementById('user_id')?.value?.trim() || null;
+        user_id = document.getElementById('user_id')?.value?.trim() || null;
     }
     const workweek_id = document.getElementById('workweek_id')?.value?.trim() || null;
 
-    if (status) filters["status"] = `${encodeURIComponent(status)}`;
-    if (department_id) filters["department_id"] = `${encodeURIComponent(department_id)}`;
-    if (tasktype_id) filters["tasktype_id"] = `${encodeURIComponent(tasktype_id)}`;
-    if (user_id) filters["user_id"] = `${encodeURIComponent(user_id)}`;
-    if (workweek_id) filters["workweek_id"] = `${encodeURIComponent(workweek_id)}`;
+
+    if (status) params.append('status', status);
+    if (department_id) params.append('department_id', department_id);
+    if (tasktype_id) params.append('tasktype_id', tasktype_id);
+    if (workweek_id) params.append('workweek_id', workweek_id);
+
+    if (pageId && pageId.value.trim() === "dashboard" && hiddenUserIdEl?.value.trim() !== "") {
+        user_id = hiddenUserIdEl.value.trim();
+        assign_by = hiddenUserIdEl.value.trim(); // adjust if assign_by is separate
+    } else {
+        user_id = document.getElementById('user_id')?.value?.trim() || null;
+        assign_by = document.getElementById('assign_by')?.value?.trim() || null;
+    }
+
+    // Add OR filters as a single query parameter (pipe-separated)
+    const orFilters = [];
+    if (user_id) orFilters.push(`user_id:${user_id}`);
+    if (assign_by) orFilters.push(`assign_by:${assign_by}`);
+    if (orFilters.length > 0) {
+        params.append('or_filters', orFilters.join('|'));
+    }
 }
 
 // ✅ Open status change modal
@@ -220,6 +252,7 @@ document.getElementById('filterForm').addEventListener('submit', function(e) {
 });
 
 document.getElementById('newTaskForm').addEventListener('submit', function(e) {
+    const currentUserId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
     
         e.preventDefault();
         const form = e.target;
@@ -230,6 +263,7 @@ document.getElementById('newTaskForm').addEventListener('submit', function(e) {
             tasktype_id: form.tasktype_id.value,
             user_id: form.user_id.value,
             work_week: form.work_week.value,
+            assign_by: currentUserId,
             status: "Pending"
         };
         fetch(`/api/tasks`, {

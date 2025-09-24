@@ -23,6 +23,8 @@ $routes->post('/tasks/uploadAttachment/(:num)', 'Task::uploadAttachment/$1');
 
 $routes->get('/project', 'Project::index');
 
+$routes->get('no-access', 'AuthController::noAccess');
+
 $routes->group('api', ['namespace' => 'App\Controllers\Api'], function($routes){
     $routes->get('tasks', 'TaskApi::index');        // fetch all tasks
     $routes->get('tasks/(:num)', 'TaskApi::show/$1');  // fetch single task

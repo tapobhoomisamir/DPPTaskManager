@@ -13,27 +13,63 @@ class TaskApi extends ResourceController
     // GET /api/tasks
     public function index()
     {
-        $filters = $this->request->getGet(); // Get query parameters
 
-        $page     = isset($filters['page']) ? (int)$filters['page'] : 1;
-        $perPage  = isset($filters['per_page']) ? (int)$filters['per_page'] : 10;
+         $db = \Config\Database::connect();
+        $builder = $db->table('tasks t');
 
+        // Join other tables
+        $builder->select('t.*, u.name as user_name, d.name as department_name, tt.name as tasktype_name');
+        $builder->join('users u', 'u.id = t.user_id', 'left');
+        $builder->join('departments d', 'd.id = t.department_id', 'left');
+        $builder->join('tasktypes tt', 'tt.id = t.tasktype_id', 'left');
 
-        $tasks = $this->model->getTasksWithFiltered($filters)
-            ->paginate($perPage, 'default', $page);
+        // 1. AND filters
+        $status = $this->request->getGet('status');
+        $department_id = $this->request->getGet('department_id');
+        $tasktype_id = $this->request->getGet('tasktype_id');
+        $workweek_id = $this->request->getGet('workweek_id');
 
-    
-        $pager = $this->model->pager;
+        if ($status) $builder->where('t.status', $status);
+        if ($department_id) $builder->where('t.department_id', $department_id);
+        if ($tasktype_id) $builder->where('t.tasktype_id', $tasktype_id);
+        if ($workweek_id) $builder->where('t.workweek_id', $workweek_id);
 
+        // 2. OR filters (user_id or assign_by)
+        $or_filters = $this->request->getGet('or_filters'); // e.g. "user_id:5|assign_by:5"
+        if ($or_filters) {
+            $orArray = explode('|', $or_filters);
+            $builder->groupStart();
+            foreach ($orArray as $filter) {
+                list($key, $value) = explode(':', $filter);
+                $builder->orWhere("t.$key", $value);
+            }
+            $builder->groupEnd();
+        }
+
+        //log_message('debug', $builder->getCompiledSelect());
+
+        // 3. Pagination
+        $page = (int) $this->request->getGet('page') ?: 1;
+        $perPage = (int) $this->request->getGet('per_page') ?: 10;
+
+        $total = $builder->countAllResults(false); // false = don’t reset query
+        $tasks = $builder->limit($perPage, ($page - 1) * $perPage)
+                         ->get()
+                         ->getResultArray();
+        
+
+        // 4. Send JSON response
         return $this->respond([
+            'success' => true,
             'tasks' => $tasks,
             'pager' => [
-                'currentPage'   => $pager->getCurrentPage('default'),
-                'totalPages'    => $pager->getPageCount('default'),
-                'totalTasks'    => $pager->getTotal('default'),
-                'perPage'       => $pager->getPerPage('default'),
+                'currentPage' => $page,
+                'perPage' => $perPage,
+                'totalTasks' => $total,
+                'totalPages' => ceil($total / $perPage)
             ]
         ]);
+        
     }
 
     // GET /api/tasks/(:id)

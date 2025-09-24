@@ -2,7 +2,7 @@ CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
     email VARCHAR(100) UNIQUE,
-	role ENUM('Viewer','Authority','Administrator','Editor','Commentator') DEFAULT 'Viewer',
+	role ENUM('Viewer','Authority','Administrator','Executor','Commentator','Incharge') DEFAULT 'Viewer',
     password VARCHAR(255)
 );
 

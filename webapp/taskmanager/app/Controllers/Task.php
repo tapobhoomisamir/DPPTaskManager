@@ -39,12 +39,19 @@ class Task extends BaseController
         $builder = $taskModel->getTasksWithFiltered($filters);
         $tasks = $builder->get()->getResultArray();
 
+
+        if ($this->sessionUser['role'] != 'Administrator' &&  $this->sessionUser['role'] != 'Authority' && $this->sessionUser['role'] != 'Incharge')
+        {
+            return redirect()->to(base_url('no-access'));
+        }
+
         return view('tasks/index', [
             'tasks' => $tasks,
             'departments' => $departments,
             'tasktypes' => $tasktypes,
             'users'       => $users,
             'workweeks' => $workweeks,
+            'sessionUser' => $this->sessionUser,
         ]);
     }
 
@@ -72,9 +79,7 @@ class Task extends BaseController
     {
         $taskModel = new TaskModel();
         $commentModel = new CommentModel();
-        $attachmentModel = new AttachmentModel();
-
-       
+        $attachmentModel = new AttachmentModel();       
 
         // fetch task details
         $task = $taskModel
@@ -111,6 +116,11 @@ class Task extends BaseController
     // Edit form page
     public function edit($id)
     {
+        if ($this->sessionUser['role'] != 'Administrator' &&  $this->sessionUser['role'] != 'Authority' || $this->sessionUser['role'] != 'Incharge')
+        {
+            return redirect()->to(base_url('no-access'));
+        }
+
         $taskModel = new TaskModel();
         $commentModel = new CommentModel();
         $attachmentModel = new AttachmentModel();

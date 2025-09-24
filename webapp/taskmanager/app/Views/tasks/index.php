@@ -7,6 +7,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+
+<?php
+    // Example: Get user ID from session (adjust as needed)
+    //$userId = session()->get('user_id');
+
+    // Fetch pending tasks count for this user (from controller)
+    $pendingTasks = isset($pendingTasks) ? $pendingTasks : 0;
+    $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from session
+    $currentRole = $sessionUser["role"]; // Replace with actual user role from session
+    $pageId = 'tasks';
+    ?>
     <!-- Header Navigation -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
     <div class="container">
@@ -20,20 +31,17 @@
                 <li class="nav-item">
                     <a class="nav-link" href="<?= base_url('') ?>">Dashboard</a>
                 </li>
+                <?php if ($currentRole === 'Administrator' || $currentRole === 'Authority' || $currentRole === 'Incharge') { ?>
                 <li class="nav-item">
                     <a class="nav-link active" href="<?= base_url('tasks') ?>">Tasks</a>
                 </li>
+                <?php } ?>
             </ul>
         </div>
     </div>
 </nav>
-<?php
-    // Example: Get user ID from session (adjust as needed)
-    //$userId = session()->get('user_id');
-    $currentUserId = 1; // Replace with actual user ID from session if needed
-    $pageId = 'tasks';
-?>
 <input type="hidden" id="currentUserId" name="currentUser_id" value="<?= $currentUserId ?>">
+<input type="hidden" id="currentUserRole" name="currentUser_role" value="<?= $currentRole ?>">
 <input type="hidden" id="pageId" name="page_id" value="<?= $pageId ?>">
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">

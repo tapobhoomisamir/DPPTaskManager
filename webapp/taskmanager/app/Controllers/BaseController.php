@@ -41,7 +41,9 @@ abstract class BaseController extends Controller
      * Be sure to declare properties for any property fetch you initialized.
      * The creation of dynamic property is deprecated in PHP 8.2.
      */
-    // protected $session;
+    protected $session;
+
+    protected $sessionUser;
 
     /**
      * @return void
@@ -53,6 +55,23 @@ abstract class BaseController extends Controller
 
         // Preload any models, libraries, etc, here.
 
-        // E.g.: $this->session = service('session');
+        $this->session = service('session');
+       
+        
+        $userData = $this->session->get('userData');
+
+        $db = \Config\Database::connect();
+        $user = $db->table('users')->where('id', $userData['id'])->get()->getRowArray();
+        if($user)
+        {
+        $this->sessionUser = [
+            'userId' => $userData['id'], // Replace with actual user ID from session if needed
+            'role' => $user['role'] // Replace with actual user name from session if needed
+        ];
+        }    else
+        {
+            // If user not found in database, redirect to login or handle accordingly
+            return redirect()->to(base_url('login'));
+        }
     }
 }

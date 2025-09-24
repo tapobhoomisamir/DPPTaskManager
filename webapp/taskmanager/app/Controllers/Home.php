@@ -7,7 +7,7 @@ class Home extends BaseController
     public function index(): string
     {
         $taskModel = new \App\Models\TaskModel();
-
+        
         $statuses = ['Pending', 'In Progress', 'Await Approval','Hold'];
 
         $allTasks = $taskModel
@@ -53,6 +53,8 @@ class Home extends BaseController
         $builder = $taskModel->getTasksWithFiltered($filters);
         $tasks = $builder->get()->getResultArray();
 
+        
+
         return view('dashboard/index', [
             'pendingTasks' => $pendingTasks,
             'inProgressTasks' => $inProgressTasks,
@@ -64,6 +66,7 @@ class Home extends BaseController
             'tasktypes' => $tasktypes,
             'users'       => $users,
             'workweeks' => $workweeks,
+            'sessionUser' => $this->sessionUser,
         ]);
     }
 }
