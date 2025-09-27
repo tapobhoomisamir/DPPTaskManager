@@ -1,13 +1,16 @@
 <h4>Attachments</h4>
 
 <!-- Upload Form -->
+ 
+ <?php if ($sessionUser["role"] != null && ($sessionUser["role"] === 'Administrator' || $sessionUser["role"] === 'Authority' || $sessionUser["role"] === 'Incharge'  || $sessionUser["role"] === 'Executor')) { ?>
+                
 <form action="<?= base_url('tasks/uploadAttachment/' . $task['id']) ?>" method="post" enctype="multipart/form-data">
     <div class="mb-3">
         <input type="file" name="attachment" class="form-control" required>
     </div>
     <button type="submit" class="btn btn-sm btn-primary">Upload</button>
 </form>
-
+<?php } ?>
 <hr>
 
 <!-- Show Existing Attachments -->

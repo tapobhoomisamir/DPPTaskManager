@@ -95,12 +95,15 @@ class Task extends BaseController
 
         // fetch comments
         $comments = $commentModel
+            ->select('comments.*, users.name as user_name')
             ->where('task_id', $id)
+            ->join('users', 'users.id = comments.user_id', 'left')
             ->orderBy('created_at', 'DESC')
             ->findAll();
 
         $attachments = $attachmentModel
             ->where('task_id', $id)
+            ->join('users', 'users.id = attachments.user_id', 'left')
             ->orderBy('uploaded_at', 'DESC')
             ->findAll();
 
@@ -108,6 +111,7 @@ class Task extends BaseController
             'task' => $task,
             'comments' => $comments,
             'attachments' => $attachments,
+            'sessionUser' => $this->sessionUser,
         ]);
     }
 
@@ -116,7 +120,7 @@ class Task extends BaseController
     // Edit form page
     public function edit($id)
     {
-        if ($this->sessionUser['role'] != 'Administrator' &&  $this->sessionUser['role'] != 'Authority' || $this->sessionUser['role'] != 'Incharge')
+        if ($this->sessionUser['role'] != 'Administrator' &&  $this->sessionUser['role'] != 'Authority' && $this->sessionUser['role'] != 'Incharge')
         {
             return redirect()->to(base_url('no-access'));
         }
@@ -146,7 +150,9 @@ class Task extends BaseController
 
         // fetch comments
         $comments = $commentModel
+            ->select('comments.*, users.name as user_name')
             ->where('task_id', $id)
+            ->join('users', 'users.id = comments.user_id', 'left')
             ->orderBy('created_at', 'DESC')
             ->findAll();
 
@@ -163,6 +169,7 @@ class Task extends BaseController
             'workweeks' => $workweeks,
             'comments' => $comments,
             'attachments' => $attachments,
+            'sessionUser' => $this->sessionUser,
         ]);
     }
 
@@ -239,7 +246,7 @@ class Task extends BaseController
             $db = db_connect();
             $db->table('attachments')->insert([
                 'task_id'   => $taskId,
-                'user_id'   => 1, // Replace with actual user ID from session
+                'user_id'   => $this->sessionUser['userId'], // Replace with actual user ID from session
                 'file_name' => $file->getClientName(),
                 'file_path' => 'uploads/tasks/' . $newName
             ]);

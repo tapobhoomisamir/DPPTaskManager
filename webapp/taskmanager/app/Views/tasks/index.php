@@ -19,27 +19,7 @@
     $pageId = 'tasks';
     ?>
     <!-- Header Navigation -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-    <div class="container">
-        <a class="navbar-brand" href="#">Task Manager</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('') ?>">Dashboard</a>
-                </li>
-                <?php if ($currentRole === 'Administrator' || $currentRole === 'Authority' || $currentRole === 'Incharge') { ?>
-                <li class="nav-item">
-                    <a class="nav-link active" href="<?= base_url('tasks') ?>">Tasks</a>
-                </li>
-                <?php } ?>
-            </ul>
-        </div>
-    </div>
-</nav>
+<?= $this->include('partials/header_navigation.php',['sessionUser' => $sessionUser]) ?>
 <input type="hidden" id="currentUserId" name="currentUser_id" value="<?= $currentUserId ?>">
 <input type="hidden" id="currentUserRole" name="currentUser_role" value="<?= $currentRole ?>">
 <input type="hidden" id="pageId" name="page_id" value="<?= $pageId ?>">
@@ -54,51 +34,11 @@
 <!-- New Task Modal -->
 <?= $this->include('partials/task_new.php') ?>
 <!-- Change Status Modal -->
-    <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <form id="statusForm">
-            <div class="modal-content">
-                <div class="modal-header">
-                <h5 class="modal-title">Change Status</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                <input type="hidden" id="statusTaskId" name="task_id">
-                <label for="newStatus">Change Status</label>
-                <select id="newStatus" class="form-control"></select>
-                </div>
-                <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Update</button>
-                </div>
-            </div>
-            </form>
-        </div>
-    </div>
+<?= $this->include('partials/task_add_status_modal.php') ?>
 
-    <!-- Add Comment Modal -->
-    <div class="modal fade" id="commentModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <form id="commentForm">
-            <div class="modal-content">
-                <div class="modal-header">
-                <h5 class="modal-title">Add Comment</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                <input type="hidden" id="commentTaskId" name="task_id">
-                <div class="mb-3">
-                    <label for="taskComment" class="form-label">Comment</label>
-                    <textarea class="form-control" id="taskComment" name="comment" rows="3" required></textarea>
-                </div>
-                </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary">Save Comment</button>
-                </div>
-            </div>
-            </form>
-        </div>
-    </div>
+<!-- Add Comment Modal -->
+<?= $this->include('partials/task_add_comment_modal.php') ?>
+
 <script src="/js/tasks.js"></script>
 <script>
   // Initialize tasks when page loads

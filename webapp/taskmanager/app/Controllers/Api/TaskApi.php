@@ -161,12 +161,18 @@ class TaskApi extends ResourceController
         if (!isset($data['comment']) || trim($data['comment']) === '') {
             return $this->failValidationErrors('Comment is required');
         }
+        // If status is provided, update task status
+        if (isset($data['status']) && trim($data['status']) != '') {
+            $status = $data['status'];
+            // Update task status
+            $this->model->update($id, ['status' => $status]);
+        }
 
         $commentModel = new CommentModel();
         $commentData = [
             'task_id'  => $id,
             'comment'  => $data['comment'],
-            'user_id'  => $data['user_id'] ?? null, // optional
+            'user_id' => !empty($data['user_id']) ? $data['user_id'] : null,// optional
         ];
         $commentModel->insert($commentData);
 

@@ -2,13 +2,16 @@
 
 document.getElementById('commentForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        debugger;
+        const userId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
+    
         const taskId = document.getElementById('commentTaskId').value;
         const comment = document.getElementById('taskComment').value;
 
         fetch(`/api/tasks/${taskId}/comments`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ comment })
+            body: JSON.stringify({ comment: comment, user_id: userId})
         })
         .then(res => res.json())
         .then(result => {

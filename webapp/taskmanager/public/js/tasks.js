@@ -27,11 +27,28 @@ function renderTasks(tasks) {
     tbody.innerHTML = '';
     tasks.forEach(task => {
         let editoption = '';
+        let statusoption = `<li><a class="dropdown-item" href="#" onclick="openStatusModal(${task.id}, '${task.tasktype_name}','${task.status}')">Change Status</a></li>`;
+        let commentoption = `<li><a class="dropdown-item" href="#" onclick="openCommentModal(${task.id})">Add Comment</a></li>`;
         let deleteoption = '';
+        let approvaloption = '';
         if (role === 'Administrator' || role === 'Authority' || role === 'Incharge' ) { 
             editoption =`<li><a class="dropdown-item" href="/tasks/edit/${task.id}">Edit</a></li>`
             deleteoption =`<li><a class="dropdown-item" href="#" onclick="deleteTask(${task.id})">Delete</a></li>`
         } 
+        else if (role === 'Viewer') {
+            statusoption = '';
+            commentoption = '';
+        }
+
+        if(task.tasktype_name === 'Approval' && task.status === 'Await Approval' && (role === 'Administrator' || role === 'Authority' || role === 'Incharge' )) {
+            approvaloption = `<li><a class="dropdown-item" href="#" onclick="openCommentModal(${task.id},'Approved')">Approve</a></li>`;
+            statusoption = '';
+        }
+
+        if(task.status === 'Approved') {
+            statusoption = '';
+        }
+
         tbody.innerHTML += `
             <tr>
                 <td>${escapeHtml(task.title)}</td>
@@ -51,8 +68,9 @@ function renderTasks(tasks) {
                         <ul class="dropdown-menu dropdown-menu-end p-2" style="min-width: 180px;">
                             ${editoption}
                             <li><a class="dropdown-item" href="/tasks/view/${task.id}">View</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="openStatusModal(${task.id}, '${task.status}')">Change Status</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="openCommentModal(${task.id})">Add Comment</a></li>
+                            ${statusoption}
+                            ${approvaloption}
+                            ${commentoption}
                             ${deleteoption}
                         </ul>
                     </div>
@@ -143,7 +161,7 @@ function createFilters(params) {
 }
 
 // ✅ Open status change modal
-function openStatusModal(taskId, currentStatus) {
+function openStatusModal(taskId, tasktype,currentStatus) {
     const modal = document.getElementById('statusModal');
     if (!modal) return;
 
@@ -158,9 +176,15 @@ function openStatusModal(taskId, currentStatus) {
                 <option value="Closed">Closed</option>
             `;
         } else {
+            let awaitApprovalStatusOption = '';
+            if(tasktype === 'Approval') {
+                awaitApprovalStatusOption = `<option value="Await Approval">Await Approval</option>`;
+            }
             statusSelect.innerHTML = `
                 <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
+                <option value="In Progress">In Progress</option>`+
+                awaitApprovalStatusOption +
+                `<option value="Hold">Hold</option>
                 <option value="Done">Done</option>
                 <option value="Closed">Closed</option>
             `;
@@ -172,11 +196,14 @@ function openStatusModal(taskId, currentStatus) {
 }
 
 // ✅ Open comment modal
-function openCommentModal(taskId) {
+function openCommentModal(taskId, newstatus) {
     const modal = document.getElementById('commentModal');
     if (!modal) return;
 
     document.getElementById('commentTaskId').value = taskId;
+    if(newstatus != null && newstatus.trim() != "") {
+        document.getElementById('commentTaskStatus').value = newstatus;
+    }
     const bsModal = new bootstrap.Modal(modal);
     bsModal.show();
 }
@@ -208,13 +235,16 @@ document.getElementById('statusModal').addEventListener('submit', function(e) {
 // Handle comment form submit
 document.getElementById('commentForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    debugger;
+    const userId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
     const taskId = document.getElementById('commentTaskId').value;
+    const taskStatus = document.getElementById('commentTaskStatus').value;
     const comment = document.getElementById('taskComment').value;
 
     fetch(`/api/tasks/${taskId}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ comment })
+        body: JSON.stringify({  comment: comment , status: taskStatus, user_id: userId  })
     })
     .then(res => res.json())
     .then(result => {

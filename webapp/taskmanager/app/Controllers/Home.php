@@ -11,27 +11,27 @@ class Home extends BaseController
         $statuses = ['Pending', 'In Progress', 'Await Approval','Hold'];
 
         $allTasks = $taskModel
-            ->where('user_id', 1)
+            ->where('user_id', $this->sessionUser['userId'])
             ->wherein('status', $statuses)
             ->countAllResults();
 
         $pendingTasks = $taskModel
-            ->where('user_id', 1)
+            ->where('user_id', $this->sessionUser['userId'])
             ->where('status', 'Pending')
             ->countAllResults();
 
         $inProgressTasks = $taskModel
-            ->where('user_id', 1)
+            ->where('user_id', $this->sessionUser['userId'])
             ->where('status', 'In Progress')
             ->countAllResults();
 
         $awaitApprovalTasks = $taskModel
-            ->where('user_id', 1)
+            ->where('user_id', $this->sessionUser['userId'])
             ->where('status', 'Await Approval')
             ->countAllResults();
 
         $holdTasks = $taskModel
-            ->where('user_id', 1)
+            ->where('user_id', $this->sessionUser['userId'])
             ->where('status', 'Hold')
             ->countAllResults();
 
