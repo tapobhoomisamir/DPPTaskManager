@@ -283,7 +283,7 @@ document.getElementById('filterForm').addEventListener('submit', function(e) {
 
 document.getElementById('newTaskForm').addEventListener('submit', function(e) {
     const currentUserId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
-    
+    debugger;
         e.preventDefault();
         const form = e.target;
         const data = {
@@ -292,7 +292,8 @@ document.getElementById('newTaskForm').addEventListener('submit', function(e) {
             department_id: form.department_id.value,
             tasktype_id: form.tasktype_id.value,
             user_id: form.user_id.value,
-            work_week: form.work_week.value,
+            workweek_id : form.work_week.value,
+            due_date: form.due_date.value,
             assign_by: currentUserId,
             status: "Pending"
         };
@@ -318,15 +319,16 @@ document.getElementById('newTaskForm').addEventListener('submit', function(e) {
 
 document.getElementById('downloadReport').addEventListener('click', function () {
     // collect filters (if any from dropdowns/inputs)
-    let filters = {};
-    createFilters(filters);
+    const params = new URLSearchParams();
+    createFilters(params);
 
     // Build query string
-    const params = new URLSearchParams({
-        ...filters
-    });
+    // const params = new URLSearchParams({
+    //     ...filters
+    // });
 
     // Open download
-    window.location.href = `/tasks/exportXls?${params.toString()}`;
+   // window.location.href = `/tasks/exportXls?${params.toString()}`;
+   window.location.href = `/tasks/download/pdf?${params.toString()}`; // PDF download
 });
   

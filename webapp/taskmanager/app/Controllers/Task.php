@@ -15,6 +15,9 @@ use CodeIgniter\HTTP\ResponseInterface;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
 class Task extends BaseController
 {
     public function index() {
@@ -224,6 +227,41 @@ class Task extends BaseController
 
         $writer->save('php://output');
         exit;
+    }
+
+    public function downloadPdf()
+    {
+        $db = \Config\Database::connect();
+        
+        $taskModel = new TaskModel();
+        $filters = $this->request->getGet(); // capture applied filters
+
+        // fetch all tasks (ignoring pagination but applying filters)
+        $builder = $taskModel->getTasksWithFiltered($filters); 
+        // $tasks = $builder->get()->getResultArray();
+        // $builder = $db->table('tasks t')
+        //     ->select('t.id, t.title, d.name as department, ty.name as task_type, u.name as assigned_user, t.status, t.due_date, t.expense')
+        //     ->join('departments d', 't.department_id = d.id', 'left')
+        //     ->join('tasktypes ty', 't.tasktype_id = ty.id', 'left')
+        //     ->join('users u', 't.user_id = u.id', 'left');
+
+        $tasks = $builder->get()->getResultArray();
+
+        // Prepare HTML
+        $html = view('reports/tasks_pdf', ['tasks' => $tasks]);
+
+        // PDF Options
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape'); // A4 Landscape
+        $dompdf->render();
+
+        // Download PDF
+        $dompdf->stream("tasks_report" . date('Ymd_His') .".pdf", ["Attachment" => true]);
     }
 
     public function uploadAttachment($taskId)

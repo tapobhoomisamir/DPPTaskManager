@@ -12,7 +12,7 @@
                             <option value="">All Status</option>
                             <option value="Pending">Pending</option>
                             <option value="Done">Done</option>
-                            <option value="Awail Approval">Awail Approval</option>
+                            <option value="Await Approval">Await Approval</option>
                             <option value="Approved">Approved</option>
                             <option value="Closed">Closed</option>
                             <option value="Hold">Hold</option>

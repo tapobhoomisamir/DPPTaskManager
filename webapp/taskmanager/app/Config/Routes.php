@@ -18,6 +18,7 @@ $routes->get('/tasks/edit/(:num)', 'Task::edit/$1');
 
 
 $routes->get('/tasks/exportXls', 'Task::exportXls');
+$routes->get('/tasks/download/pdf', 'Task::downloadPdf');
 
 $routes->post('/tasks/uploadAttachment/(:num)', 'Task::uploadAttachment/$1');
 

@@ -53,23 +53,25 @@ class TaskModel extends Model
             ->join('tasktypes', 'tasktypes.id = tasks.tasktype_id', 'left')
             ->join('workweeks', 'workweeks.id = tasks.workweek_id', 'left');
 
-        if (!empty($filters['status'])) {
-            $builder->where('tasks.status', $filters['status']);
-        }
-        if (!empty($filters['user_id'])) {
-            $builder->where('tasks.user_id', $filters['user_id']);
-        }
-        if (!empty($filters['due_date'])) {
-            $builder->where('tasks.due_date', $filters['due_date']);
-        }
-        if (!empty($filters['department_id'])) {
-            $builder->where('tasks.department_id', $filters['department_id']);
-        }
-        if (!empty($filters['tasktype_id'])) {
-            $builder->where('tasks.tasktype_id', $filters['tasktype_id']);
-        }
-        if (!empty($filters['workweek_id'])) {
-            $builder->where('tasks.workweek_id', $filters['workweek_id']);
+
+        if (!empty($filters['status'])) $builder->where('tasks.status', $filters['status']);
+        if (!empty($filters['department_id'])) $builder->where('tasks.department_id', $filters['department_id']);
+        if (!empty($filters['tasktype_id'])) $builder->where('tasks.tasktype_id', $filters['tasktype_id']);
+        if (!empty($filters['workweek_id'])) $builder->where('tasks.workweek_id', $filters['workweek_id']);
+
+        if(!empty($filters['or_filters'])){
+
+            // 2. OR filters (user_id or assign_by)
+            $or_filters = $filters['or_filters']; // e.g. "user_id:5|assign_by:5"
+            if ($or_filters) {
+                $orArray = explode('|', $or_filters);
+                $builder->groupStart();
+                foreach ($orArray as $filter) {
+                    list($key, $value) = explode(':', $filter);
+                    $builder->orWhere("tasks.$key", $value);
+                }
+                $builder->groupEnd();
+            }
         }
 
         return $builder; // Return the builder, NOT findAll()
