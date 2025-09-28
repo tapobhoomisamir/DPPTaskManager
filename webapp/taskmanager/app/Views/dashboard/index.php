@@ -19,7 +19,7 @@
     $pageId = 'dashboard';
     ?>
     <!-- Header Navigation -->
-    <?= $this->include('partials/header_navigation.php',['sessionUser' => $sessionUser]) ?>
+    <?= view('partials/header_navigation.php',['sessionUser' => $sessionUser,'pageId' =>$pageId]) ?>
     
     <input type="hidden" id="currentUserId" name="currentUser_id" value="<?= $currentUserId ?>">
     <input type="hidden" id="currentUserRole" name="currentUser_role" value="<?= $currentRole ?>">
@@ -27,16 +27,28 @@
     <div class="container">
         <div class="row mb-4">
             <div class="col-6 col-md-3">
-                <div class="card text-bg-primary mb-2" style="min-height:120px;">
+                <div class="card text-bg-primary mb-2" style="min-height:120px; cursor:pointer;" 
+         onclick="filterTasks('all')">
                     <div class="card-body py-2 px-3">
                         <h5 class="card-title mb-1" style="font-size:1rem;">All Tasks</h5>
                         <p class="card-text mb-0" style="font-size:2rem;"><?= isset($allTasks) ? $allTasks : 0 ?></p>
+                        <small>Total</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card text-bg-light mb-2" style="min-height:120px; cursor:pointer;" 
+         onclick="filterTasks('allassigned')">
+                    <div class="card-body py-2 px-3">
+                        <h5 class="card-title mb-1" style="font-size:1rem;">All Assigned Tasks</h5>
+                        <p class="card-text mb-0" style="font-size:2rem;"><?= isset($allAssignedTasks) ? $allAssignedTasks : 0 ?></p>
                         <small>Total assigned</small>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card text-bg-warning mb-2" style="min-height:120px;">
+                <div class="card text-bg-warning mb-2" style="min-height:120px; cursor:pointer;" 
+         onclick="filterTasks('Pending')">
                     <div class="ccard-body py-2 px-3">
                         <h5 class="card-title mb-1" style="font-size:1rem;">Pending Tasks</h5>
                         <p class="card-text mb-0" style="font-size:2rem;"><?= isset($pendingTasks) ? $pendingTasks : 0 ?></p>
@@ -45,7 +57,8 @@
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card text-bg-info mb-2" style="min-height:120px;">
+                <div class="card text-bg-info mb-2" style="min-height:120px; cursor:pointer;" 
+         onclick="filterTasks('In Progress')">
                     <div class="card-body py-2 px-3">
                         <h5 class="card-title mb-1" style="font-size:1rem;">In Progress</h5>
                         <p class="card-text mb-0" style="font-size:2rem;"><?= isset($inProgressTasks) ? $inProgressTasks : 0 ?></p>
@@ -54,7 +67,8 @@
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card text-bg-secondary mb-2" style="min-height:120px;">
+                <div class="card text-bg-secondary mb-2" style="min-height:120px; cursor:pointer;" 
+         onclick="filterTasks('Await Approval')">
                     <div class="card-body py-2 px-3">
                         <h5 class="card-title mb-1" style="font-size:1rem;">Await Approval</h5>
                         <p class="card-text mb-0" style="font-size:2rem;"><?= isset($awaitApprovalTasks) ? $awaitApprovalTasks : 0 ?></p>
@@ -63,7 +77,8 @@
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card text-bg-dark mb-2" style="min-height:120px;">
+                <div class="card text-bg-dark mb-2" style="min-height:120px; cursor:pointer;" 
+         onclick="filterTasks('Hold')">
                     <div class="card-body py-2 px-3">
                         <h5 class="card-title mb-1" style="font-size:1rem;">Hold</h5>
                         <p class="card-text mb-0" style="font-size:2rem;"><?= isset($holdTasks) ? $holdTasks : 0 ?></p>

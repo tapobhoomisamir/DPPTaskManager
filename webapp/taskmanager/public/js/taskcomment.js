@@ -2,7 +2,6 @@
 
 document.getElementById('commentForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        debugger;
         const userId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
     
         const taskId = document.getElementById('commentTaskId').value;

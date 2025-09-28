@@ -102,6 +102,12 @@ async function fetchTasks(page = 1, filters = {}) {
     const params = new URLSearchParams();
     createFilters(params);
 
+    fetchTaskByParams(page,params);
+
+}
+
+async function fetchTaskByParams(page = 1,params) {
+    
     currentPage = page;
 
     params.append('page', currentPage);
@@ -231,11 +237,35 @@ document.getElementById('statusModal').addEventListener('submit', function(e) {
     .catch(() => alert('Failed to update status.'));
 });
 
+function filterTasks(status) {
+    const params = new URLSearchParams();
+    if(status == null || status.trim() == "" || status.trim() == "all")
+    {
+        fetchTaskByParams(1,params);
+        return;
+    }
+    if(status == 'allassigned')
+    {
+        params.append('statuses', 'In Progress,Pending,Hold,Await Approval');
+    }
+    else
+    {
+        params.append('statuses', status);
+    }
+
+    
+    const currentUserId = document.getElementById('currentUserId')?.value?.trim() || null;
+    if(currentUserId)
+    {
+        params.append('user_id', currentUserId );
+    }
+    fetchTaskByParams(1,params);
+}
+
 
 // Handle comment form submit
 document.getElementById('commentForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    debugger;
     const userId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
     const taskId = document.getElementById('commentTaskId').value;
     const taskStatus = document.getElementById('commentTaskStatus').value;
@@ -283,7 +313,7 @@ document.getElementById('filterForm').addEventListener('submit', function(e) {
 
 document.getElementById('newTaskForm').addEventListener('submit', function(e) {
     const currentUserId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
-    debugger;
+    
         e.preventDefault();
         const form = e.target;
         const data = {

@@ -19,7 +19,7 @@
     $pageId = 'tasks';
     ?>
     <!-- Header Navigation -->
-<?= $this->include('partials/header_navigation.php',['sessionUser' => $sessionUser]) ?>
+<?= view('partials/header_navigation.php',['sessionUser' => $sessionUser,'pageId' =>$pageId]) ?>
 <input type="hidden" id="currentUserId" name="currentUser_id" value="<?= $currentUserId ?>">
 <input type="hidden" id="currentUserRole" name="currentUser_role" value="<?= $currentRole ?>">
 <input type="hidden" id="pageId" name="page_id" value="<?= $pageId ?>">

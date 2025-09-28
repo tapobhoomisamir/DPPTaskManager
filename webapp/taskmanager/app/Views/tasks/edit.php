@@ -10,9 +10,10 @@
      <?php
 $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from session
     $currentRole = $sessionUser["role"]; // Replace with actual user role from session
+    $pageId = 'tasks';
 ?>
 <!-- Header Navigation -->
-<?= $this->include('partials/header_navigation.php',['sessionUser' => $sessionUser]) ?>
+<?= view('partials/header_navigation.php',['sessionUser' => $sessionUser,'pageId' =>$pageId]) ?>
 <input type="hidden" id="currentUserId" name="currentUser_id" value="<?= $currentUserId ?>">
 <input type="hidden" id="currentUserRole" name="currentUser_role" value="<?= $currentRole ?>">
 <div class="container mt-4">
