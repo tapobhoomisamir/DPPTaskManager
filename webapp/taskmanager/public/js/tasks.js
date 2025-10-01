@@ -41,7 +41,7 @@ function renderTasks(tasks) {
         }
 
         if(task.tasktype_name === 'Approval' && task.status === 'Await Approval' && (role === 'Administrator' || role === 'Authority' || role === 'Incharge' )) {
-            approvaloption = `<li><a class="dropdown-item" href="#" onclick="openCommentModal(${task.id},'Approved')">Approve</a></li>`;
+            approvaloption = `<li><a class="dropdown-item" href="#" onclick="openCommentModal(${task.id},'Approved',${task.user_id})">Approve</a></li>`;
             statusoption = '';
         }
 
@@ -202,14 +202,34 @@ function openStatusModal(taskId, tasktype,currentStatus) {
 }
 
 // ✅ Open comment modal
-function openCommentModal(taskId, newstatus) {
+function openCommentModal(taskId, newstatus = null, userId = null) {
     const modal = document.getElementById('commentModal');
     if (!modal) return;
 
     document.getElementById('commentTaskId').value = taskId;
+    document.getElementById('taskComment').value = '';
+    
+    document.getElementById('userAssignDiv').hidden = false;
+    let isApprovedStatus = false;
     if(newstatus != null && newstatus.trim() != "") {
         document.getElementById('commentTaskStatus').value = newstatus;
+        if(newstatus === 'Approved') {
+            document.getElementById('commentModalTitle').textContent = "Approve Task";
+            const select = document.getElementById('user_id_assign');
+            if (userId) {
+                select.value = userId; // set default
+            } else {
+                select.selectedIndex = 0; // fallback
+            }
+            isApprovedStatus = true;
+        }
+       
     }
+     if(!isApprovedStatus) {
+        document.getElementById('userAssignDiv').hidden = true;
+        document.getElementById('commentModalTitle').textContent = "Add Comment";      
+    }
+
     const bsModal = new bootstrap.Modal(modal);
     bsModal.show();
 }
@@ -266,15 +286,16 @@ function filterTasks(status) {
 // Handle comment form submit
 document.getElementById('commentForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    const userId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
+    const currentUserId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
     const taskId = document.getElementById('commentTaskId').value;
     const taskStatus = document.getElementById('commentTaskStatus').value;
     const comment = document.getElementById('taskComment').value;
+    const assignUserId = document.getElementById('user_id_assign')?.value?.trim() || null;
 
     fetch(`/api/tasks/${taskId}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({  comment: comment , status: taskStatus, user_id: userId  })
+        body: JSON.stringify({  comment: comment , status: taskStatus, currentUserId: currentUserId,assignUserId: assignUserId  })
     })
     .then(res => res.json())
     .then(result => {

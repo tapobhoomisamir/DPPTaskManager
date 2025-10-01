@@ -176,11 +176,18 @@ class TaskApi extends ResourceController
             $this->model->update($id, ['status' => $status]);
         }
 
+        // If user_id is provided, update task user_id
+        if (isset($data['assignUserId']) && trim($data['assignUserId']) != '') {
+            $assignUserId = $data['assignUserId'];
+            // Update task status
+            $this->model->update($id, ['user_id' => $assignUserId]);
+        }
+
         $commentModel = new CommentModel();
         $commentData = [
             'task_id'  => $id,
             'comment'  => $data['comment'],
-            'user_id' => !empty($data['user_id']) ? $data['user_id'] : null,// optional
+            'user_id' => !empty($data['currentUserId']) ? $data['currentUserId'] : null,// optional
         ];
         $commentModel->insert($commentData);
 

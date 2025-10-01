@@ -2,7 +2,7 @@
 
 document.getElementById('commentForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const userId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
+        const currentUserId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
     
         const taskId = document.getElementById('commentTaskId').value;
         const comment = document.getElementById('taskComment').value;
@@ -10,7 +10,7 @@ document.getElementById('commentForm').addEventListener('submit', function(e) {
         fetch(`/api/tasks/${taskId}/comments`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ comment: comment, user_id: userId})
+            body: JSON.stringify({ comment: comment, currentUserId: currentUserId})
         })
         .then(res => res.json())
         .then(result => {
