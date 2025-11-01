@@ -50,10 +50,11 @@ function renderTasks(tasks) {
         }
 
         tbody.innerHTML += `
-            <tr>
-                <td>${escapeHtml(task.title)}</td>
-                <td>${escapeHtml(task.department_name)}</td>
+            <tr data-task-id="${task.id}" style="cursor: pointer;">
                 <td>${escapeHtml(task.tasktype_name)}</td>
+                <td>${escapeHtml(task.title)}</td>
+                <td>${escapeHtml(task.latest_comment)}</td>
+                <td>${escapeHtml(task.department_name)}</td>
                 <td>${escapeHtml(task.user_name)}</td>
                 <td>
                     <span class="badge ${task.status === 'Done' ? 'bg-success' : 'bg-warning text-dark'}">
@@ -381,5 +382,21 @@ document.getElementById('downloadReport').addEventListener('click', function () 
     // Open download
    // window.location.href = `/tasks/exportXls?${params.toString()}`;
    window.location.href = `/tasks/download/pdf?${params.toString()}`; // PDF download
+});
+
+// Add row click navigation (event delegation) — ignore clicks on links, buttons, dropdowns
+document.getElementById('tasksBody')?.addEventListener('click', function (e) {
+    const tr = e.target.closest('tr[data-task-id]');
+    if (!tr) return;
+
+    // if clicked on a link/button or inside dropdown, do not navigate by row click
+    if (e.target.closest('a') || e.target.closest('button') || e.target.closest('.dropdown')) {
+        return;
+    }
+
+    const taskId = tr.getAttribute('data-task-id');
+    if (taskId) {
+        window.location.href = `/tasks/view/${taskId}`;
+    }
 });
   

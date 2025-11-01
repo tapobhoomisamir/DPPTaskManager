@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Task List</title>
+    <title>Work List</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -30,7 +30,7 @@
                 <div class="card text-bg-primary mb-2" style="min-height:120px; cursor:pointer;" 
          onclick="filterTasks('all')">
                     <div class="card-body py-2 px-3">
-                        <h5 class="card-title mb-1" style="font-size:1rem;">All Tasks</h5>
+                        <h5 class="card-title mb-1" style="font-size:1rem;">All works</h5>
                         <p class="card-text mb-0" style="font-size:2rem;"><?= isset($allTasks) ? $allTasks : 0 ?></p>
                         <small>Total</small>
                     </div>
@@ -40,7 +40,7 @@
                 <div class="card text-bg-light mb-2" style="min-height:120px; cursor:pointer;" 
          onclick="filterTasks('allassigned')">
                     <div class="card-body py-2 px-3">
-                        <h5 class="card-title mb-1" style="font-size:1rem;">All Assigned Tasks</h5>
+                        <h5 class="card-title mb-1" style="font-size:1rem;">All Assigned Works</h5>
                         <p class="card-text mb-0" style="font-size:2rem;"><?= isset($allAssignedTasks) ? $allAssignedTasks : 0 ?></p>
                         <small>Total assigned</small>
                     </div>
@@ -50,7 +50,7 @@
                 <div class="card text-bg-warning mb-2" style="min-height:120px; cursor:pointer;" 
          onclick="filterTasks('Pending')">
                     <div class="ccard-body py-2 px-3">
-                        <h5 class="card-title mb-1" style="font-size:1rem;">Pending Tasks</h5>
+                        <h5 class="card-title mb-1" style="font-size:1rem;">Pending Works</h5>
                         <p class="card-text mb-0" style="font-size:2rem;"><?= isset($pendingTasks) ? $pendingTasks : 0 ?></p>
                         <small>For you</small>
                     </div>
@@ -90,9 +90,9 @@
     </div>
     <div class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="mb-0">All Tasks</h2>
+            <h2 class="mb-0">All Works</h2>
             <?php if ($currentRole === 'Administrator' || $currentRole === 'Authority' || $currentRole === 'Incharge') { ?>                    
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTaskModal">+ New Task</button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTaskModal">+ New Work</button>
             <?php } ?>
         </div>
         <?= $this->include('partials/task_filters.php') ?>

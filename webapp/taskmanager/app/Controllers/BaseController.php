@@ -56,7 +56,7 @@ abstract class BaseController extends Controller
         // Preload any models, libraries, etc, here.
 
         $this->session = service('session');
-       
+       $this->session->set('userData', ['id' => 2, 'name' => 'Admin']); // Simulating a logged-in user
         
         $userData = $this->session->get('userData');
 

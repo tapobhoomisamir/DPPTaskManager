@@ -25,8 +25,8 @@
 <input type="hidden" id="pageId" name="page_id" value="<?= $pageId ?>">
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">All Tasks</h2>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTaskModal">+ New Task</button>
+        <h2 class="mb-0">All Work List</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTaskModal">+ New Work</button>
     </div>
     <?= $this->include('partials/task_filters.php') ?>
     <?= $this->include('partials/task_list.php') ?>

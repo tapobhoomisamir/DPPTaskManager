@@ -5,15 +5,16 @@
                 <table class="table table-bordered table-hover align-middle" style="min-width: 800px;">
                     <div class="d-flex justify-content-end mb-3">
                         <button class="btn btn-success" id="downloadReport">
-                            <i class="bi bi-file-earmark-excel"></i> Download tasks
+                            <i class="bi bi-file-earmark-excel"></i> Download Works
                         </button>
                     </div>
                     <thead class="table-light">
                         <tr>
-                            <th>Title</th>
+                            <th>Agenda</th>
+                            <th>Work</th>
+                            <th>Latest Comment</th>
                             <th>Department</th>
-                            <th>Type</th>
-                            <th>User</th>
+                            <th>Responsible</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>

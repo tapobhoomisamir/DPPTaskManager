@@ -4,12 +4,12 @@
     <form id="newTaskForm">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="newTaskModalLabel">Create New Task</h5>
+          <h5 class="modal-title" id="newTaskModalLabel">Create New Work</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <div class="mb-3">
-                <label for="taskTitle" class="form-label">Title</label>
+                <label for="taskTitle" class="form-label">Work</label>
                 <input type="text" class="form-control" id="taskTitle" name="title" required>
             </div>
             <div class="mb-3">
@@ -26,18 +26,18 @@
                 </select>
             </div>
             <div class="mb-3">
-                <label for="taskType" class="form-label">Type</label>
+                <label for="taskType" class="form-label">Agenda</label>
                 <select class="form-select" id="taskType" name="tasktype_id" required>
-                    <option value="">Select Type</option>
+                    <option value="">Select Agenda</option>
                     <?php foreach($tasktypes as $type): ?>
                         <option value="<?= $type['id'] ?>"><?= esc($type['name']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="mb-3">
-                <label for="taskUser" class="form-label">Assign To</label>
+                <label for="taskUser" class="form-label">Responsible</label>
                 <select class="form-select" id="taskUser" name="user_id" required>
-                    <option value="">Select Assign To</option>
+                    <option value="">Select Reponsible</option>
                     <?php foreach($users as $user): ?>
                         <option value="<?= $user['id'] ?>"><?= esc($user['name']) ?></option>
                     <?php endforeach; ?>

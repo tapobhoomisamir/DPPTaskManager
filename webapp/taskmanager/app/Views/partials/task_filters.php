@@ -29,18 +29,18 @@
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label for="tasktype_id" class="form-label">Type</label>
+                        <label for="tasktype_id" class="form-label">Agenda</label>
                         <select name="tasktype_id" class="form-select" id="tasktype_id">
-                            <option value="">All Types</option>
+                            <option value="">All Agenda</option>
                             <?php foreach($tasktypes as $type): ?>
                                 <option value="<?= $type['id'] ?>"><?= esc($type['name']) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="col-md-4" id="userFilterDiv">
-                        <label for="user_id" class="form-label">User</label>
+                        <label for="user_id" class="form-label">Responsible</label>
                         <select name="user_id" class="form-select" id="user_id">
-                            <option value="">All Users</option>
+                            <option value="">All Responsible</option>
                             <?php foreach($users as $user): ?>
                                 <option value="<?= $user['id'] ?>"><?= esc($user['name']) ?></option>
                             <?php endforeach; ?>

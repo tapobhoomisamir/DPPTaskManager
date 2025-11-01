@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Task List</title>
+    <title>Work List</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,7 +20,7 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
     <h2><?= esc($task['title']) ?></h2>
     <p><strong>Description:</strong> <?= esc($task['description']) ?></p>
     <p><strong>Department:</strong> <?= esc($task['department_name']) ?></p>
-    <p><strong>Type:</strong> <?= esc($task['tasktype_name']) ?></p>
+    <p><strong>Agenda:</strong> <?= esc($task['tasktype_name']) ?></p>
     <p><strong>Assigned To:</strong> <?= esc($task['user_name']) ?></p>
     <?php if (!empty($task['completed_date'])): ?>
         <p><strong>Completed Date:</strong> <?= esc($task['completed_date']) ?></p>

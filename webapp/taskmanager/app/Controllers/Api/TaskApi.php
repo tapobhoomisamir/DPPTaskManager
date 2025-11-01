@@ -17,11 +17,16 @@ class TaskApi extends ResourceController
          $db = \Config\Database::connect();
         $builder = $db->table('tasks t');
 
-        // Join other tables
-        $builder->select('t.*, u.name as user_name, d.name as department_name, tt.name as tasktype_name');
+         // subquery to get latest comment per task
+        $latestCommentSub = '(SELECT c1.* FROM comments c1 JOIN (SELECT task_id, MAX(id) AS max_id FROM comments GROUP BY task_id) c2 ON c1.task_id = c2.task_id AND c1.id = c2.max_id) latest';
+
+        $builder->select('t.*, u.name as user_name, d.name as department_name, tt.name as tasktype_name, 
+            latest.comment as latest_comment, latest.user_id as latest_comment_user_id, latest.created_at as latest_comment_at');
         $builder->join('users u', 'u.id = t.user_id', 'left');
         $builder->join('departments d', 'd.id = t.department_id', 'left');
         $builder->join('tasktypes tt', 'tt.id = t.tasktype_id', 'left');
+        // join latest comment (left join so tasks without comments still return)
+        $builder->join($latestCommentSub, 'latest.task_id = t.id', 'left');
 
         // 1. AND filters
         $status = $this->request->getGet('status');

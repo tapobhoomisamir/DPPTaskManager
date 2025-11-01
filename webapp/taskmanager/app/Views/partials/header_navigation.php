@@ -13,7 +13,7 @@
                 </li>
                 <?php if ($sessionUser["role"] != null && ($sessionUser["role"] === 'Administrator' || $sessionUser["role"] === 'Authority' || $sessionUser["role"] === 'Incharge')) { ?>
                 <li class="nav-item">
-                    <a class="nav-link <?= ($pageId === 'tasks') ? 'active' : '' ?>"  href="<?= base_url('tasks') ?>">Tasks</a>
+                    <a class="nav-link <?= ($pageId === 'tasks') ? 'active' : '' ?>"  href="<?= base_url('tasks') ?>">Works</a>
                 </li>
                 <?php } ?>
             </ul>
