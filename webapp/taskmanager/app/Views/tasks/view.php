@@ -21,7 +21,7 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
     <p><strong>Description:</strong> <?= esc($task['description']) ?></p>
     <p><strong>Department:</strong> <?= esc($task['department_name']) ?></p>
     <p><strong>Agenda:</strong> <?= esc($task['tasktype_name']) ?></p>
-    <p><strong>Assigned To:</strong> <?= esc($task['user_name']) ?></p>
+    <p><strong>Responsible:</strong> <?= esc($task['user_name']) ?></p>
     <?php if (!empty($task['completed_date'])): ?>
         <p><strong>Completed Date:</strong> <?= esc($task['completed_date']) ?></p>
     <?php endif; ?>
@@ -38,6 +38,9 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
     <?php endif; ?>
     <?php if (!empty($task['status'])): ?>
         <p><strong>Status:</strong> <?= esc($task['status']) ?></p>
+    <?php endif; ?>
+    <?php if (!empty($task['status'])): ?>
+        <p><strong>Priority:</strong> <?= esc($task['priority']) ?></p>
     <?php endif; ?>
 
     <hr>

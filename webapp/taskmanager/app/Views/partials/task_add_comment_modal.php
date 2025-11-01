@@ -14,7 +14,7 @@
                 <textarea class="form-control" id="taskComment" name="comment" rows="3" required></textarea>
             </div>
             <div class="col-md-4" id="userAssignDiv">
-                <label for="user_id_assign" class="form-label">Assign to</label>
+                <label for="user_id_assign" class="form-label">Responsible</label>
                 <select name="user_id_assign" class="form-select" id="user_id_assign">
                      <?php foreach($users as $user): ?>
                         <option value="<?= $user['id'] ?>" 

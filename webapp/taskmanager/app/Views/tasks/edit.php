@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Edit Task</title>
+    <title>Edit Work List</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,13 +17,13 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
 <input type="hidden" id="currentUserId" name="currentUser_id" value="<?= $currentUserId ?>">
 <input type="hidden" id="currentUserRole" name="currentUser_role" value="<?= $currentRole ?>">
 <div class="container mt-4">
-    <h2>Edit Task</h2>
+    <h2>Edit Work List</h2>
 
     <form id="editTaskForm">
         <input type="hidden" name="id" value="<?= $task['id'] ?>">
 
         <div class="mb-3">
-            <label for="taskTitle" class="form-label">Title</label>
+            <label for="taskTitle" class="form-label">Work List</label>
             <input type="text" class="form-control" id="taskTitle" name="title"
                    value="<?= esc($task['title']) ?>" required>
         </div>
@@ -46,9 +46,9 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
         </div>
 
         <div class="mb-3">
-            <label for="taskType" class="form-label">Type</label>
+            <label for="taskType" class="form-label">Agenda</label>
             <select class="form-select" id="taskType" name="tasktype_id" required>
-                <option value="">Select Type</option>
+                <option value="">Select Agenda</option>
                 <?php foreach($tasktypes as $type): ?>
                     <option value="<?= $type['id'] ?>" <?= $task['tasktype_id'] == $type['id'] ? 'selected' : '' ?>>
                         <?= esc($type['name']) ?>
@@ -58,9 +58,9 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
         </div>
 
         <div class="mb-3">
-            <label for="taskUser" class="form-label">Assign To</label>
+            <label for="taskUser" class="form-label">Responsible</label>
             <select class="form-select" id="taskUser" name="user_id" required>
-                <option value="">Select Assign To</option>
+                <option value="">Select Responsible</option>
                 <?php foreach($users as $user): ?>
                     <option value="<?= $user['id'] ?>" <?= $task['user_id'] == $user['id'] ? 'selected' : '' ?>>
                         <?= esc($user['name']) ?>
@@ -113,6 +113,27 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
             </select>
         </div>
 
+        <div class="mb-3">
+            <label for="priority" class="form-label">Priority</label>
+            <select class="form-select" id="priority" name="priority" required>
+                <?php
+                    // support either 'Priority' or 'priority' key from the task array
+                    $prio = '';
+                    if (isset($task['priority'])) {
+                        $prio = $task['priority'];
+                    } elseif (isset($task['priority'])) {
+                        $prio = $task['priority'];
+                    }
+
+                    $priorityOptions = ['High', 'Medium', 'Low'];
+                    foreach ($priorityOptions as $opt) {
+                        $selected = ($prio === $opt) ? 'selected' : '';
+                        echo "<option value=\"" . esc($opt) . "\" $selected>" . esc($opt) . "</option>";
+                    }
+                ?>
+            </select>
+        </div>
+
         <button type="submit" class="btn btn-primary">Save Changes</button>
         <a href="<?= base_url('tasks/view/'.$task['id']) ?>" class="btn btn-secondary">Cancel</a>
     </form>
@@ -129,7 +150,6 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
 
     document.getElementById('editTaskForm').addEventListener('submit', function(e) {
         e.preventDefault();
-
         const formData = new FormData(this);
         const taskId = formData.get('id');
 
@@ -154,6 +174,65 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
         })
         .catch(() => alert("Error while updating task"));
     });
+
+    /*
+    Populate the #status select using the same logic as openStatusModal in tasks.js.
+    This keeps status options consistent between row modal and edit page.
+    */
+    (function(){
+        const statusSelect = document.getElementById('status');
+        if (!statusSelect) return;
+
+        const taskType = "<?= esc($task['tasktype_name']) ?>";
+        const currentStatus = "<?= esc($task['status']) ?>";
+        // prefer role from hidden input if present (keeps JS driven pages consistent)
+        const roleEl = document.getElementById('currentUserRole');
+        const role = roleEl ? roleEl.value : "<?= esc($currentRole) ?>";
+
+        function buildStatusOptions(taskType, currentStatus, role) {
+            // Base statuses
+            const base = ['Pending', 'In Progress', 'Done', 'Hold','Closed'];
+            const opts = [];
+
+            if (taskType === 'Approval' || taskType.toLowerCase().includes('approval')) {
+                // Approval-type task logic:
+                if (currentStatus === 'Await Approval') {
+                    // show Await Approval to everyone; show Approved only to approvers
+                    opts.push('Await Approval');
+                    if (['Administrator','Authority','Incharge'].includes(role)) {
+                        opts.push('Approved');
+                    }
+                } else if (currentStatus === 'Approved') {
+                    opts.push('Approved');
+                } else {
+                    // before approval stage allow normal workflow and the option to send for approval
+                    opts.push(...base);
+                    // add Await Approval as possible next step
+                    opts.push('Await Approval');
+                }
+            } else {
+                // non-approval task: normal statuses
+                opts.push(...base);
+                // keep current status even if it's an uncommon value
+                if (!opts.includes(currentStatus)) opts.push(currentStatus);
+            }
+
+            // Deduplicate while preserving order
+            return [...new Set(opts)];
+        }
+
+        const options = buildStatusOptions(taskType, currentStatus, role);
+
+        // Render options with current selected
+        statusSelect.innerHTML = '';
+        options.forEach(opt => {
+            const o = document.createElement('option');
+            o.value = opt;
+            o.textContent = opt;
+            if (opt === currentStatus) o.selected = true;
+            statusSelect.appendChild(o);
+        });
+    })();
 </script>
 </body>
 </html>
