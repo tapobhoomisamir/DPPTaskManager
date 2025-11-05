@@ -58,6 +58,12 @@
                 <label for="due_date" class="form-label">Due Date</label>
                 <input type="date" class="form-control" id="due_date" name="due_date" required>
             </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" value="1" id="taskPrivate" name="private">
+                <label class="form-check-label" for="taskPrivate">
+                    Private task
+                </label>
+            </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -67,3 +73,35 @@
     </form>
   </div>
 </div>
+
+<script>
+    (function(){
+        const privateChk = document.getElementById('taskPrivate');
+        const deptEl = document.getElementById('taskDepartment');
+        const typeEl = document.getElementById('taskType');
+        const workweekEl = document.getElementById('work_week');
+        const taskUserEl = document.getElementById('taskUser');
+        
+
+        if (!privateChk) return;
+
+        function applyPrivateState() {
+            const isPrivate = privateChk.checked;
+            // disable/enable fields
+            [deptEl, typeEl, workweekEl, taskUserEl].forEach(el => {
+                if (!el) return;
+                el.disabled = isPrivate;
+                if (isPrivate) {
+                    // clear selection when private
+                    if (el.tagName === 'SELECT') el.value = '';
+                    else el.value = '';
+                }
+            });
+        }
+
+        // initial
+        applyPrivateState();
+
+        privateChk.addEventListener('change', applyPrivateState);
+    })();
+</script>

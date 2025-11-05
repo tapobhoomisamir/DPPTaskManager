@@ -333,41 +333,68 @@ document.getElementById('filterForm').addEventListener('submit', function(e) {
     fetchTasks(1);
 });
 
-document.getElementById('newTaskForm').addEventListener('submit', function(e) {
-    const currentUserId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
-    
-        e.preventDefault();
-        const form = e.target;
-        const data = {
-            title: form.title.value,
-            description: form.description.value, 
-            department_id: form.department_id.value,
-            tasktype_id: form.tasktype_id.value,
-            user_id: form.user_id.value,
-            workweek_id : form.work_week.value,
-            due_date: form.due_date.value,
-            assign_by: currentUserId,
-            status: "Pending"
-        };
-        fetch(`/api/tasks`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(res => res.json())
-        .then(result => {
-            if(result.success){
-                form.reset();
-                fetchTasks(1);
-                const modalEl = document.getElementById('newTaskModal');
-                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
-                modalInstance.hide();
-            } else {
-                alert(result.message || 'Failed to create task.');
-            }
-        })
-        .catch(() => alert('Failed to create task.'));
-});
+function getFieldValue(contextOrForm, name, fallback = null) {
+    let el = null;
+    // if contextOrForm is a form element with .elements
+    if (contextOrForm && contextOrForm.elements) {
+        el = contextOrForm.elements[name];
+    }
+    // fallback to global lookup by id or name
+    if (!el) el = document.getElementById(name) || document.querySelector(`[name="${name}"]`);
+    if (!el) return fallback;
+
+    // checkbox handling
+    const type = el.type || el.tagName && el.tagName.toLowerCase();
+    if (type === 'checkbox') {
+        return el.checked ? (el.value !== undefined ? el.value : '1') : 0;
+    }
+
+    const val = el.value;
+    if (val === undefined || val === null) return fallback;
+    return (typeof val === 'string')  && val.trim() == ""? fallback : val;
+}
+
+const newTaskFormEl = document.getElementById('newTaskForm');
+    if (newTaskFormEl) {
+   newTaskFormEl.addEventListener('submit', function(e) {
+        const currentUserId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
+        debugger;
+            e.preventDefault();
+            const form = newTaskFormEl; 
+            //const form = e.target;
+            const data = {
+                title: getFieldValue(newTaskFormEl, 'title', ''),
+                description: getFieldValue(newTaskFormEl, 'description', ''),
+                department_id: getFieldValue(newTaskFormEl, 'department_id', null),
+                tasktype_id: getFieldValue(newTaskFormEl, 'tasktype_id', null),
+                user_id: getFieldValue(newTaskFormEl, 'user_id', currentUserId),
+                work_week: getFieldValue(newTaskFormEl, 'work_week', null) || getFieldValue(newTaskFormEl, 'workweek_id', null),
+                due_date: getFieldValue(newTaskFormEl, 'due_date', null),
+                private: getFieldValue(newTaskFormEl, 'private', 0) ? 1 : 0,
+                assign_by: currentUserId,
+                status: "Pending"
+            };
+            fetch(`/api/tasks`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                debugger;
+                if(result.success){
+                    form.reset();
+                    fetchTasks(1);
+                    const modalEl = document.getElementById('newTaskModal');
+                    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+                    modalInstance.hide();
+                } else {
+                    alert(result.message || 'Failed to create task.');
+                }
+            })
+            .catch(() => alert('Failed to create task.'));
+    });
+}
 
 document.getElementById('downloadReport').addEventListener('click', function () {
     // collect filters (if any from dropdowns/inputs)

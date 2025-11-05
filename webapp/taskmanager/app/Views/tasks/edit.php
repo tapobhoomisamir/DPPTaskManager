@@ -33,6 +33,7 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
             <textarea class="form-control" id="taskDescription" name="description" rows="3" required><?= esc($task['description']) ?></textarea>
         </div>
 
+        <?php if (empty($task['private'])): ?>
         <div class="mb-3">
             <label for="taskDepartment" class="form-label">Department</label>
             <select class="form-select" id="taskDepartment" name="department_id" required>
@@ -80,6 +81,7 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
                 <?php endforeach; ?>
             </select>
         </div>        
+        <?php endif; ?>
 
         <div class="mb-3">
             <label for="due_date" class="form-label">Due Date</label>

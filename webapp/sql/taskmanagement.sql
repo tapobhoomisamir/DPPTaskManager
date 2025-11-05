@@ -49,6 +49,7 @@ CREATE TABLE tasks (
 	workweek_id INT,
     status ENUM('Pending','In Progress','Done','Await Approval','Approved','Closed','Hold') DEFAULT 'Pending',	
 	priority ENUM('High','Medium','Low') DEFAULT 'Low',
+	private TINYINT(1) NOT NULL DEFAULT 0,
 	start_date TIMESTAMP NULL DEFAULT NULL,
 	expense INT NULL DEFAULT NULL,
 	time_taken INT NULL DEFAULT NULL,

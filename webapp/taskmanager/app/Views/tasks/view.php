@@ -19,9 +19,22 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
 <div class="container mt-4">
     <h2><?= esc($task['title']) ?></h2>
     <p><strong>Description:</strong> <?= esc($task['description']) ?></p>
-    <p><strong>Department:</strong> <?= esc($task['department_name']) ?></p>
-    <p><strong>Agenda:</strong> <?= esc($task['tasktype_name']) ?></p>
-    <p><strong>Responsible:</strong> <?= esc($task['user_name']) ?></p>
+    <?php if (empty($task['private']) || !empty($task['department_name'])): ?>
+        <p><strong>Department:</strong> <?= esc($task['department_name']) ?></p>
+    <?php endif; ?>
+
+    <?php if (empty($task['private']) || !empty($task['tasktype_name'])): ?>
+        <p><strong>Agenda:</strong> <?= esc($task['tasktype_name']) ?></p>
+    <?php endif; ?>
+
+    <?php if (empty($task['private']) || !empty($task['user_name'])): ?>
+        <p><strong>Responsible:</strong> <?= esc($task['user_name']) ?></p>
+    <?php endif; ?>
+
+    <?php if (empty($task['private']) || !empty($task['workweek'])): ?>
+        <p><strong>Work Week:</strong> <?= esc($task['workweek']) ?></p>
+    <?php endif; ?>
+    
     <?php if (!empty($task['completed_date'])): ?>
         <p><strong>Completed Date:</strong> <?= esc($task['completed_date']) ?></p>
     <?php endif; ?>
