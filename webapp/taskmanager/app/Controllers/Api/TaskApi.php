@@ -34,12 +34,14 @@ class TaskApi extends ResourceController
         $tasktype_id = $this->request->getGet('tasktype_id');
         $workweek_id = $this->request->getGet('workweek_id');
         $user_id = $this->request->getGet('user_id');
+        $private = $this->request->getGet('private');
 
         if ($status) $builder->where('t.status', $status);
         if ($department_id) $builder->where('t.department_id', $department_id);
         if ($tasktype_id) $builder->where('t.tasktype_id', $tasktype_id);
         if ($workweek_id) $builder->where('t.workweek_id', $workweek_id);
         if ($user_id) $builder->where('t.user_id', $user_id);
+        if ($private !== null && $private !== '') $builder->where('t.private', (int) $private);
 
         $statuses = $this->request->getGet('statuses'); // e.g. "Pending,In Progress"
         if ($statuses) {

@@ -17,6 +17,11 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
 <input type="hidden" id="currentUserId" name="currentUser_id" value="<?= $currentUserId ?>">
 <input type="hidden" id="currentUserRole" name="currentUser_role" value="<?= $currentRole ?>">
 <div class="container mt-4">
+    <!-- Back button: goes back if there is history, otherwise goes to tasks list -->
+    <a href="<?= base_url('tasks') ?>" class="btn btn-secondary mb-3"
+       onclick="if (history.length > 1) { history.back(); return false; }">
+        &larr; Back
+    </a>
     <h2>Edit Work List</h2>
 
     <form id="editTaskForm">

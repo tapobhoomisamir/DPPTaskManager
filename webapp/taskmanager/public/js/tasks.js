@@ -114,6 +114,7 @@ async function fetchTaskByParams(page = 1,params) {
     params.append('page', currentPage);
     params.append('per_page', rowsPerPage);
 
+    debugger;
     const apiUrl = `/api/tasks?${params.toString()}`;
     console.log("API URL:", apiUrl);
 
@@ -164,6 +165,14 @@ function createFilters(params) {
     if (assign_by) orFilters.push(`assign_by:${assign_by}`);
     if (orFilters.length > 0) {
         params.append('or_filters', orFilters.join('|'));
+    }
+
+    // set private param: 1 if current page is dashboard, else 0
+    const pageIdEl = document.getElementById('pageId');
+    const privateVal = (pageIdEl && pageIdEl.value.trim() === 'dashboard') ? null : '0';
+    if(privateVal)
+    {
+        params.append('private', privateVal);
     }
 }
 
@@ -280,6 +289,15 @@ function filterTasks(status) {
     {
         params.append('user_id', currentUserId );
     }
+    
+    // set private param: 1 if current page is dashboard, else 0
+    const pageIdEl = document.getElementById('pageId');
+    const privateVal = (pageIdEl && pageIdEl.value.trim() === 'dashboard') ? null : '0';
+    if(privateVal)
+    {
+        params.append('private', privateVal);
+    }
+
     fetchTaskByParams(1,params);
 }
 
@@ -358,7 +376,7 @@ const newTaskFormEl = document.getElementById('newTaskForm');
     if (newTaskFormEl) {
    newTaskFormEl.addEventListener('submit', function(e) {
         const currentUserId = document.getElementById('currentUserId') ? document.getElementById('currentUserId').value : '';
-        debugger;
+        
             e.preventDefault();
             const form = newTaskFormEl; 
             //const form = e.target;
@@ -381,7 +399,6 @@ const newTaskFormEl = document.getElementById('newTaskForm');
             })
             .then(res => res.json())
             .then(result => {
-                debugger;
                 if(result.success){
                     form.reset();
                     fetchTasks(1);
