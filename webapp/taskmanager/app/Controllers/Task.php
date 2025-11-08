@@ -86,8 +86,9 @@ class Task extends BaseController
 
         // fetch task details
         $task = $taskModel
-            ->select('tasks.*, departments.name as department_name, tasktypes.name as tasktype_name, users.name as user_name')
+            ->select('tasks.*, departments.name as department_name, workweeks.workweek as workweek, tasktypes.name as tasktype_name, users.name as user_name')
             ->join('departments', 'departments.id = tasks.department_id', 'left')
+            ->join('workweeks', 'workweeks.id = tasks.workweek_id', 'left')
             ->join('tasktypes', 'tasktypes.id = tasks.tasktype_id', 'left')
             ->join('users', 'users.id = tasks.user_id', 'left')
             ->find($id);
@@ -141,8 +142,9 @@ class Task extends BaseController
 
         // fetch task details
         $task = $taskModel
-            ->select('tasks.*, departments.name as department_name, tasktypes.name as tasktype_name, users.name as user_name')
+            ->select('tasks.*, departments.name as department_name, workweeks.workweek as workweek_name, tasktypes.name as tasktype_name, users.name as user_name')
             ->join('departments', 'departments.id = tasks.department_id', 'left')
+            ->join('workweeks', 'workweeks.id = tasks.workweek_id', 'left')
             ->join('tasktypes', 'tasktypes.id = tasks.tasktype_id', 'left')
             ->join('users', 'users.id = tasks.user_id', 'left')
             ->find($id);

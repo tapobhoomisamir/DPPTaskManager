@@ -71,8 +71,8 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
         </div>
 
         <div class="mb-3">
-            <label for="work_week" class="form-label">Work Week</label>
-            <select name="work_week" class="form-select" id="work_week">
+            <label for="workweek_id" class="form-label">Work Week</label>
+            <select name="workweek_id" class="form-select" id="workweek_id">
                 <option value="">All Work Weeks</option>
                 <?php foreach($workweeks as $ww): ?>
                     <option value="<?= $ww['id'] ?>" <?= $task['workweek_id'] == $ww['id'] ? 'selected' : '' ?>>
@@ -159,6 +159,8 @@ $currentUserId = $sessionUser["userId"]; // Replace with actual user ID from ses
         formData.forEach((value, key) => {
             data[key] = value;
         });
+
+        debugger;
 
         fetch(`/api/tasks/${taskId}`, {
             method: 'PUT',
