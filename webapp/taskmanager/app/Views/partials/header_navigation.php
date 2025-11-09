@@ -15,6 +15,9 @@
                 <li class="nav-item">
                     <a class="nav-link <?= ($pageId === 'tasks') ? 'active' : '' ?>"  href="<?= base_url('tasks') ?>">Works</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($pageId === 'reports') ? 'active' : '' ?>"  href="<?= base_url('reports') ?>">Reports</a>
+                </li>
                 <?php } ?>
             </ul>
         </div>

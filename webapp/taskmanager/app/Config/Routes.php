@@ -7,6 +7,7 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 
+$routes->get('/reports', 'Report::index');
 
 $routes->get('/tasks', 'Task::index');
 $routes->get('/tasks/create', 'Task::create');
@@ -26,6 +27,9 @@ $routes->get('/project', 'Project::index');
 
 $routes->get('no-access', 'AuthController::noAccess');
 
+//$routes->get('api/reports/department-tasks', 'Api\ReportApi::departmentTasks');
+
+
 $routes->group('api', ['namespace' => 'App\Controllers\Api'], function($routes){
     $routes->get('tasks', 'TaskApi::index');        // fetch all tasks
     $routes->get('tasks/(:num)', 'TaskApi::show/$1');  // fetch single task
@@ -36,5 +40,8 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function($routes){
     $routes->put('tasks/(:num)/status', 'TaskApi::updateStatus/$1');
     $routes->post('tasks/(:num)/comments', 'TaskApi::addComment/$1');
 
-
+    $routes->get('reports/department-agenda-distribution', 'ReportApi::departmentAgendaDistribution');
+    $routes->get('reports/agenda-status-distribution', 'ReportApi::agendaStatusDistribution');
+    $routes->get('reports/worklist-trend', 'ReportApi::worklistTrend');
 });
+

@@ -27,6 +27,9 @@ class TaskApi extends ResourceController
         $builder->join('tasktypes tt', 'tt.id = t.tasktype_id', 'left');
         // join latest comment (left join so tasks without comments still return)
         $builder->join($latestCommentSub, 'latest.task_id = t.id', 'left');
+         // Exclude tasks with status 'Closed'
+        $builder->where('t.status !=', 'Closed');
+
 
         // 1. AND filters
         $status = $this->request->getGet('status');
@@ -156,6 +159,9 @@ class TaskApi extends ResourceController
         // If status is "done", set completed_date = NOW
         if (strtolower($data['status']) === 'closed') {
             $updateData['completed_date'] = date('Y-m-d H:i:s');
+        }
+        else {
+            $updateData['completed_date'] = null;
         }
 
         $this->model->update($id, $updateData);

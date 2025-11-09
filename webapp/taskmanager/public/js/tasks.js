@@ -114,7 +114,6 @@ async function fetchTaskByParams(page = 1,params) {
     params.append('page', currentPage);
     params.append('per_page', rowsPerPage);
 
-    debugger;
     const apiUrl = `/api/tasks?${params.toString()}`;
     console.log("API URL:", apiUrl);
 
