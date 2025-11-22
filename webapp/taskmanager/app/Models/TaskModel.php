@@ -12,7 +12,7 @@ class TaskModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['project_id','user_id','title','description','department_id','assign_by','due_date','tasktype_id','workweek_id','status','priority','private','start_date','due_date','status','completed_date','expense','time_taken'];
+    protected $allowedFields    = ['project_id','user_id','title','description','department_id','assign_by','due_date','tasktype_id','workweek_id','status','priority','private','start_date','due_date','status','completed_date','expense','time_taken','is_deleted'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -58,6 +58,8 @@ class TaskModel extends Model
         if (!empty($filters['department_id'])) $builder->where('tasks.department_id', $filters['department_id']);
         if (!empty($filters['tasktype_id'])) $builder->where('tasks.tasktype_id', $filters['tasktype_id']);
         if (!empty($filters['workweek_id'])) $builder->where('tasks.workweek_id', $filters['workweek_id']);
+
+        $builder->where('tasks.is_deleted', 0); // Exclude deleted tasks
 
         if(!empty($filters['or_filters'])){
 

@@ -29,6 +29,7 @@ class TaskApi extends ResourceController
         $builder->join($latestCommentSub, 'latest.task_id = t.id', 'left');
          // Exclude tasks with status 'Closed'
         $builder->where('t.status !=', 'Closed');
+        $builder->where('t.is_deleted', 0); // Exclude deleted tasks
 
 
         // 1. AND filters
@@ -118,7 +119,7 @@ class TaskApi extends ResourceController
     public function update($id = null)
     {
         $task = $this->model->find($id);
-        if (!$task) return $this->failNotFound('Task not found');
+        if (!$task && $task["is_deleted"] = 0) return $this->failNotFound('Task not found');
 
         $data = $this->request->getJSON(true);
         $this->model->update($id, $data);
@@ -135,7 +136,11 @@ class TaskApi extends ResourceController
         $task = $this->model->find($id);
         if (!$task) return $this->failNotFound('Task not found');
 
-        $this->model->delete($id);
+        $delete = ['is_deleted' => 1];
+
+        log_message('debug', 'Delete data: ' . json_encode($delete));
+
+        $this->model->update($id, $delete);
         return $this->respond([
             'message' => 'Task deleted successfully',
             'success' => true

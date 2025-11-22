@@ -14,33 +14,40 @@ class Home extends BaseController
         $allTasks = $taskModel
             ->groupStart()
                 ->where('user_id', $userId)
+                ->where('is_deleted', 0)
                 ->orWhere('assign_by', $userId)
+                ->where('is_deleted', 0)
             ->groupEnd()
             ->countAllResults();
 
         $allAssignedTasks = $taskModel
             ->where('user_id', $userId)
+            ->where('is_deleted', 0)
             ->wherein('status', $statuses)
             ->countAllResults();
 
         $pendingTasks = $taskModel
             ->where('user_id', $userId)
             ->where('status', 'Pending')
+                ->where('is_deleted', 0)
             ->countAllResults();
 
         $inProgressTasks = $taskModel
             ->where('user_id', $userId)
             ->where('status', 'In Progress')
+                ->where('is_deleted', 0)
             ->countAllResults();
 
         $awaitApprovalTasks = $taskModel
             ->where('user_id', $userId)
             ->where('status', 'Await Approval')
+                ->Where('is_deleted', 0)
             ->countAllResults();
 
         $holdTasks = $taskModel
             ->where('user_id', $userId)
             ->where('status', 'Hold')
+                ->Where('is_deleted', 0)
             ->countAllResults();
 
         // Fetch filter options

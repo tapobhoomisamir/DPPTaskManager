@@ -14,17 +14,26 @@ class ReportApi extends ResourceController
     public function departmentAgendaDistribution()
     {
         $db = \Config\Database::connect();
-        $query = $db->table('tasks t')
+        
+        $workweekIds = $this->getWorkWeeksInRange($db);
+
+        $builder = $db->table('tasks t')
             ->select('d.name as department, tt.name as agenda, COUNT(*) as count')
             ->join('departments d', 'd.id = t.department_id', 'left')
             ->join('tasktypes tt', 'tt.id = t.tasktype_id', 'left')
-            ->groupBy('d.name, tt.name')
-            ->get();
+            ->groupBy('d.name, tt.name');
 
+        $this->setBuilderDateRange($builder, $workweekIds);
+        $builder->where('t.is_deleted', 0); // Exclude deleted tasks
+        
+
+        $query = $builder->get();
+        
         $departments = [];
         $agendas = [];
         $counts = [];
 
+        log_message('debug', "ReportApi::departmentAgendaDistribution processing results: " . json_encode($query->getResultArray()));
         foreach ($query->getResultArray() as $row) {
             $dept = $row['department'] ?? 'Others';
             $agenda = $row['agenda'] ?? 'Others';
@@ -46,11 +55,18 @@ class ReportApi extends ResourceController
     public function agendaStatusDistribution()
     {
         $db = \Config\Database::connect();
-        $query = $db->table('tasks t')
+
+        $workweekIds = $this->getWorkWeeksInRange($db);
+
+        $builder = $db->table('tasks t')
             ->select('tt.name as agenda, t.status, COUNT(*) as count')
             ->join('tasktypes tt', 'tt.id = t.tasktype_id', 'left')
-            ->groupBy('tt.name, t.status')
-            ->get();
+            ->groupBy('tt.name, t.status');
+
+        $this->setBuilderDateRange($builder, $workweekIds);
+        $builder->where('t.is_deleted', 0); // Exclude deleted tasks
+
+        $query = $builder->get();
 
         $agendas = [];
         $statuses = [];
@@ -85,34 +101,53 @@ class ReportApi extends ResourceController
             $dates[] = date('Y-m-d', strtotime("-$i days"));
         }
 
-        // Created
-        $created = [];
-        $rows = $db->table('tasks')
+        $workweekIds = $this->getWorkWeeksInRange($db);
+
+        $builder = $db->table('tasks t')
             ->select("DATE(created_at) as dt, COUNT(*) as cnt")
             ->where('created_at >=', $dates[0] . ' 00:00:00')
-            ->groupBy('dt')
-            ->get()->getResultArray();
+            ->groupBy('dt');
+
+        $this->setBuilderDateRange($builder, $workweekIds);
+        $builder->where('t.is_deleted', 0); // Exclude deleted tasks
+
+        $query = $builder->get();
+
+        // Created
+        $created = [];
+        $rows = $query->getResultArray();
         $createdMap = array_column($rows, 'cnt', 'dt');
         foreach ($dates as $d) $created[] = isset($createdMap[$d]) ? (int)$createdMap[$d] : 0;
 
-        // Completed (status = Done or Completed)
-        $completed = [];
-        $rows = $db->table('tasks')
+        $builder = $db->table('tasks t')
             ->select("DATE(completed_date) as dt, COUNT(*) as cnt")
             ->whereIn('status', ['Done', 'Completed'])
             ->where('completed_date >=', $dates[0] . ' 00:00:00')
-            ->groupBy('dt')
-            ->get()->getResultArray();
+            ->groupBy('dt');
+
+        $this->setBuilderDateRange($builder, $workweekIds);
+        $builder->where('t.is_deleted', 0); // Exclude deleted tasks
+
+        $query = $builder->get();
+        // Completed (status = Done or Completed)
+        $completed = [];
+        $rows = $query->getResultArray();
         $completedMap = array_column($rows, 'cnt', 'dt');
         foreach ($dates as $d) $completed[] = isset($completedMap[$d]) ? (int)$completedMap[$d] : 0;
 
-        // Due (by due_date)
-        $due = [];
-        $rows = $db->table('tasks')
+
+        $builder = $db->table('tasks t')
             ->select("DATE(due_date) as dt, COUNT(*) as cnt")
             ->where('due_date >=', $dates[0])
-            ->groupBy('dt')
-            ->get()->getResultArray();
+            ->groupBy('dt');
+
+        $this->setBuilderDateRange($builder, $workweekIds);
+        $builder->where('t.is_deleted', 0); // Exclude deleted tasks
+
+        $query = $builder->get();
+        // Due (by due_date)
+        $due = [];
+        $rows =$query->getResultArray();
         $dueMap = array_column($rows, 'cnt', 'dt');
         foreach ($dates as $d) $due[] = isset($dueMap[$d]) ? (int)$dueMap[$d] : 0;
 
@@ -122,5 +157,36 @@ class ReportApi extends ResourceController
             'completed' => $completed,
             'due' => $due
         ]);
+    }
+
+    private function getWorkWeeksInRange($db)
+    {
+        $start = $this->request->getGet('start_date');
+        $end = $this->request->getGet('end_date');
+
+        $wwRows = $db->table('workweeks')
+            ->select('id')
+            ->groupStart()
+                ->where('start_date >=', $start)
+                ->where('end_date <=', $end)
+            ->groupEnd()
+            ->orGroupStart()
+                ->where('start_date <=', $end)
+                ->where('end_date >=', $start)
+            ->groupEnd()
+            ->get()->getResultArray();
+        return array_column($wwRows, 'id');
+    }
+
+    private function setBuilderDateRange($builder, $workweekIds)
+    {
+        // Filter by workweek IDs if range is set
+        if (!empty($workweekIds)) {
+            $builder->whereIn('t.workweek_id', $workweekIds);
+        }
+        else
+        {
+             $builder->whereIn('t.workweek_id', [0]);
+        }
     }
 }

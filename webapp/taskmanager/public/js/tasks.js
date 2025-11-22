@@ -385,7 +385,7 @@ const newTaskFormEl = document.getElementById('newTaskForm');
                 department_id: getFieldValue(newTaskFormEl, 'department_id', null),
                 tasktype_id: getFieldValue(newTaskFormEl, 'tasktype_id', null),
                 user_id: getFieldValue(newTaskFormEl, 'user_id', currentUserId),
-                work_week: getFieldValue(newTaskFormEl, 'work_week', null) || getFieldValue(newTaskFormEl, 'workweek_id', null),
+                workweek_id: getFieldValue(newTaskFormEl, 'work_week', null) || getFieldValue(newTaskFormEl, 'workweek_id', null),
                 due_date: getFieldValue(newTaskFormEl, 'due_date', null),
                 private: getFieldValue(newTaskFormEl, 'private', 0) ? 1 : 0,
                 assign_by: currentUserId,
